@@ -7,3 +7,4 @@ The following projects are located here:
 * [openportd](https://github.com/cdpxe/OpenBSDhacks/tree/master/openportd): "port knocking" service, but actually not using ports (it uses ICMP instead), for OpenBSD; written in 2006
 * [patches](https://github.com/cdpxe/OpenBSDhacks/tree/master/patches): some patches for OpenBSD kernel/userland
 
+Project website: [http://steffen-wendzel.blogspot.com/p/security-hacks.html](http://steffen-wendzel.blogspot.com/p/security-hacks.html)
