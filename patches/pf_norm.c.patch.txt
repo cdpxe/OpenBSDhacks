@@ -1,0 +1,15 @@
+Index: pf_norm.c
+===================================================================
+RCS file: /cvs/src/sys/net/pf_norm.c,v
+retrieving revision 1.140
+diff -u -p -r1.140 pf_norm.c
+--- pf_norm.c	18 Jul 2011 21:03:10 -0000	1.140
++++ pf_norm.c	8 Sep 2011 10:02:37 -0000
+@@ -1454,4 +1454,7 @@ pf_scrub(struct mbuf *m, u_int16_t flags
+ 	if (flags & PFSTATE_RANDOMID && af == AF_INET &&
+ 	    !(h->ip_off & ~htons(IP_DF)))
+ 		h->ip_id = htons(ip_randomid());
++
++	/* clear IP reserved flag */
++	h->off &= ~htons(IP_RF);
+ }
