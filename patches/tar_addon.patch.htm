@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><title>NEOHAPSIS - Peace of Mind Through Integrity and Insight</title>
+
+
+    
+	<meta name="author" content="http://www.gsdesign.com">
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta name="ROBOTS" content="ALL">
+	<meta name="Copyright" content="Copyright (c) 2007 Neohapsis">
+	<style type="text/css" media="screen">@import "/_includes/common.css";</style>
+	<style type="text/css" media="print">@import "/_includes/print.css";</style>
+	<link rel="icon" href="http://archives.neohapsis.com/archives/openbsd/2005-07/_images/icon.png" type="image/png"></head><body>
+
+<div id="mainContainerHome">
+
+	<a href="http://www.neohapsis.com/" target="_blank"><img src="tar_addon.patch_files/neohapsis_logo.gif" alt="" class="floatright" id="logo" height="17" width="142"></a>
+	<a href="http://archives.neohapsis.com/"><img src="tar_addon.patch_files/logo_archives.gif" alt="OSEC" class="floatleft" height="72" width="212"></a>
+	<table class="floatleft" border="0" width="500">
+	 <tbody><tr>
+	  <td align="center">
+	<br><b>
+Neohapsis is currently accepting applications for employment. 
+For more information, please visit our website <a href="http://www.neohapsis.com/">www.neohapsis.com</a> or email <a href="mailto:hr@neohapsis.com">hr@neohapsis.com</a></b>
+	  </td>
+	 </tr>
+	</tbody></table>
+		
+	<div id="breadcrumbs">
+<a href="http://www.neohapsis.com/">Neohapsis</a> &gt; <a href="http://archives.neohapsis.com/">Archives</a> &gt; <a href="http://archives.neohapsis.com/archives/openbsd/">OpenBSD Security</a>&gt; <a href="">2005-07</a><br>	</div>
+	
+	<div id="centerContent">
+	
+<div id="tableWidth">
+<div id="messageContent">
+         
+<font face="arial" size="2">&nbsp;<br>
+
+<!-- information found above this marker is copyright 1998-2000,
+Neohapsis, Inc.  Information found below this marker, up to but not
+including the indicated marker below, has been made public domain and is
+copyrighted by the originating author. -->
+
+<font size="+1">tar-patch</font></font><p>
+
+<!-- received="Sun Jul  3 06:44:19 2005" -->
+<!-- isoreceived="20050703114419" -->
+<!-- sent="Sun, 3 Jul 2005 13:39:05 +0200" -->
+<!-- isosent="20050703113905" -->
+<!-- name="Steffen Wendzel" -->
+<!-- email="SWendzel<img src="/imgs/at.gif" align="middle" border="0">t-online.de" -->
+<!-- subject="tar-patch" -->
+<!-- id="20050703133905.3525ed1d.SWendzel@t-online.de" -->
+<!-- charset="us-ascii" -->
+<!-- expires="-1" -->
+</p><p class="headers">
+<font face="arial" size="2"><strong>From:</strong> Steffen Wendzel (<em>SWendzel<img src="tar_addon.patch_files/at.gif" align="middle" border="0">t-online.de</em>)<br>
+<strong>Date:</strong> Sun Jul 03 2005 - 06:39:05 CDT
+</font></p>
+<ul class="links">
+<font face="arial" size="2"><li><strong>Messages sorted by:</strong> 
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/index.html#143">[ date ]</a>
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/thread.html#143">[ thread ]</a>
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/subject.html#143">[ subject ]</a>
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/author.html#143">[ author ]</a>
+</li></font></ul>
+<hr>
+<!-- body="start" -->
+<p>
+<font face="arial" size="2">Hi.
+<br>
+</font></p><p><font face="arial" size="2">I ported a feature from Solaris' 'tar' to OpenBSD's 'tar' tool.
+<br>
+It is the -X parameter to exclude files from an archive. OpenBSD's
+<br>
+tar already got an -X parameter, so i gave it the name -E (for exclude).
+<br>
+This parameter takes an regular expression:
+<br>
+</font></p><p><font face="arial" size="2">cdp_xe<img src="tar_addon.patch_files/at.gif" align="middle" border="0">eygo:/tmp$ tar -cvz -E ^pp$ -E y$ -f pp.tgz p*
+<br>
+excluding: pp
+<br>
+excluding: pp.y
+<br>
+pp.c
+<br>
+cdp_xe<img src="tar_addon.patch_files/at.gif" align="middle" border="0">eygo:/tmp$ tar -xzvf pp.tgz
+<br>
+pp.c
+<br>
+</font></p><p><font face="arial" size="2">This is the patch:
+<br>
+</font></p><p><font face="arial" size="2">------------------------- snip ---------------------
+<br>
+--- ../pax_backup/ar_io.c	Sat Jul  2 21:18:34 2005
+<br>
++++ ar_io.c	Sun Jul  3 13:16:02 2005
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -83,6 +83,8 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;static int wr_trail = 1;		/* trailer was rewritten in append */
+<br>
+&nbsp;static int can_unlnk = 0;		/* do we unlink null archives?  */
+<br>
+&nbsp;const char *arcname;			/* printable name of archive */
+<br>
++int exclude_count = 0;			/* list of regex-strings for exclude */
+<br>
++regex_t **exclude;			/* files tar should not add to archive */
+<br>
+&nbsp;const char *gzip_program;		/* name of gzip program */
+<br>
+&nbsp;static pid_t zpid = -1;			/* pid of child process */
+<br>
+&nbsp;int force_one_volume;			/* 1 if we ignore volume changes */
+<br>
+--- ../pax_backup/ftree.c	Sat Jul  2 21:18:34 2005
+<br>
++++ ftree.c	Sun Jul  3 13:23:58 2005
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -147,6 +147,7 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FTREE *ft;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int len;
+<br>
++	int excl_tmp;
+<br>
+&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* simple check for bad args
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -155,6 +156,12 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;paxwarn(0,
+"Invalid file name argument");
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return(-1);
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
++
+<br>
++	for(excl_tmp=0; excl_tmp &lt; exclude_count; excl_tmp++)
+<br>
++		if(regexec(exclude[excl_tmp], str, 0, NULL, 0)==0) {
+<br>
++			printf("excluding: %s\n", str);
+<br>
++			return(0);
+<br>
++		}
+<br>
+&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*
+allocate FTREE node and add to the end of the linked list (args are
+<br>
+--- ../pax_backup/options.c	Sat Jul  2 21:18:34 2005
+<br>
++++ options.c	Sun Jul  3 13:25:16 2005
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -616,7 +616,7 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* process option flags
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ((c = getoldopt(argc, argv,
+<br>
+-	    "b:cef:hmopqruts:vwxzBC:HI:LOPXZ014578")) != -1) {
+<br>
++	    "b:cef:hmopqruts:vwxzBC:E:HI:LOPXZ014578")) != -1) {
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch (c) {
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case 'b':
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -742,6 +742,21 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case 'C':
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chdname
+= optarg;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+<br>
++		case 'E':
+<br>
++			if((exclude = (regex_t **) realloc(exclude, (sizeof(regex_t *)*(exclude_count+1))))==NULL) {
+<br>
++				perror("realloc");
+<br>
++				exit(1);
+<br>
++			}			
+<br>
++			if((exclude[exclude_count] = (regex_t *) malloc(sizeof(regex_t *)))==NULL) {
+<br>
++				perror("malloc");
+<br>
++				exit(1);
+<br>
++			}
+<br>
++			if(regcomp(exclude[exclude_count], optarg, 0)!=0) {
+<br>
++				perror("regcomp");
+<br>
++				exit(1);
+<br>
++			}
+<br>
++			exclude_count++;
+<br>
++			break;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case 'H':
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*
+follow command line symlinks only
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -1551,11 +1566,12 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;tar_usage(void)
+<br>
+&nbsp;{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(void)fputs(
+<br>
+-	    "usage: tar {crtux}[014578befHhLmOoPpqsvwXZz]\n"
+<br>
+-	    "\t  [blocking-factor | archive | replstr] [-C directory] [-I file]\n"
+<br>
+-	    "\t  [file ...]\n"
+<br>
++	    "usage: tar {crtux}[014578bEefHhLmOoPpqsvwXZz]\n"
+<br>
++	    "\t  [blocking-factor | archive | replstr] [-C directory] [-E regex]\n"
+<br>
++	    "\t  [-I file] [file ...]\n"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+tar {-crtux} [-014578eHhLmOoPpqvwXZz] [-b blocking-factor]\n"
+<br>
+-	    "\t  [-C directory] [-f archive] [-I file] [-s replstr] [file ...]\n",
+<br>
++	    "\t  [-C directory] [-f archive] [-E regex] [-I file] [-s replstr]\n"
+<br>
++	    "\t  [file ...]\n",
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stderr);
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1);
+<br>
+&nbsp;}
+<br>
+--- ../pax_backup/extern.h	Sat Jul  2 21:18:34 2005
+<br>
++++ extern.h	Sun Jul  3 13:15:58 2005
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -41,10 +41,13 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;&nbsp;*/
+<br>
+&nbsp;
+<br>
+&nbsp;#include &lt;sys/cdefs.h&gt;
+<br>
++#include &lt;regex.h&gt;
+<br>
+&nbsp;
+<br>
+&nbsp;/*
+<br>
+&nbsp;&nbsp;* ar_io.c
+<br>
+&nbsp;&nbsp;*/
+<br>
++extern int exclude_count;
+<br>
++extern regex_t **exclude;
+<br>
+&nbsp;extern const char *arcname;
+<br>
+&nbsp;extern const char *gzip_program;
+<br>
+&nbsp;extern int force_one_volume;
+<br>
+--- ../pax_backup/tar.1	Sat Jul  2 21:18:34 2005
+<br>
++++ tar.1	Sun Jul  3 13:29:49 2005
+<br>
+<img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0"> -141,6 +141,9 <img src="tar_addon.patch_files/at.gif" align="middle" border="0"><img src="tar_addon.patch_files/at.gif" align="middle" border="0">
+<br>
+&nbsp;When extracting, files will be extracted into
+<br>
+&nbsp;the specified directory; when creating, the specified files will be matched
+<br>
+&nbsp;from the directory.
+<br>
++.It Fl E
+<br>
++Exclude a file given throught a regular expression. You can use this option
+<br>
++multiple times in one command.
+<br>
+&nbsp;.It Fl e
+<br>
+&nbsp;Stop after the first error.
+<br>
+&nbsp;.It Fl f Ar archive
+<br>
+</font></p><p><font face="arial" size="2">------------------------- snap ---------------------
+<br>
+</font></p><p></p><p></p><p><font face="arial" size="2">-- 
+<br>
+www.wendzel.de
+<br>
+</font></p><p><font face="arial" size="2">[demime 1.01d removed an attachment of type application/octet-stream which had a name of tar_patch]
+<br>
+<!-- body="end" -->
+</font></p><hr>
+<ul class="links">
+<font face="arial" size="2"><li><strong>Messages sorted by:</strong> 
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/index.html#143">[ date ]</a>
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/thread.html#143">[ thread ]</a>
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/subject.html#143">[ subject ]</a>
+<a href="http://archives.neohapsis.com/archives/openbsd/2005-07/author.html#143">[ author ]</a>
+</li></font></ul>
+</div>
+<font face="arial" size="2">	</font><div style="clear: both;"></div>
+<font face="arial" size="2">	
+	</font></div>
+<font face="arial" size="2">	
+	</font><div id="footer"><font face="arial" size="2">Portions of this site ©1998-2007, Neohapsis, Inc. Questions, comments or feedback welcomed. <span id="links"><a href="mailto:webmaster@neohapsis.com">webmaster@neohapsis.com</a></span>
+ </font></div>
+</div>
+</div></body></html>

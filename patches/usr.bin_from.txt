@@ -1,0 +1,67 @@
+cvs server: Diffing .
+Index: from.c
+===================================================================
+RCS file: /cvs/src/usr.bin/from/from.c,v
+retrieving revision 1.12
+diff -u -p -r1.12 from.c
+--- from.c      14 Mar 2006 19:39:49 -0000      1.12
++++ from.c      17 Aug 2006 09:30:23 -0000
+@@ -61,13 +61,12 @@ main(int argc, char *argv[])
+        struct passwd *pwd;
+        int ch, newline;
+        char *file, *sender, *p;
+-#if MAXPATHLEN > BUFSIZ
+-       char buf[MAXPATHLEN];
+-#else
+        char buf[BUFSIZ];
+-#endif
++       char *content;
++       char *lbuf;
++       size_t len;
+
+-       file = sender = NULL;
++       file = sender = lbuf = NULL;
+        while ((ch = getopt(argc, argv, "f:s:")) != -1)
+                switch((char)ch) {
+                case 'f':
+@@ -79,7 +78,6 @@ main(int argc, char *argv[])
+                                if (isupper(*p))
+                                        *p = tolower(*p);
+                        break;
+-               case '?':
+                default:
+                        fprintf(stderr, "usage: from [-f file] [-s sender] [user]\n");
+                        exit(1);
+@@ -115,16 +113,28 @@ main(int argc, char *argv[])
+        }
+        if (!freopen(file, "r", stdin))
+                err(1, "%s", file);
+-       for (newline = 1; fgets(buf, sizeof(buf), stdin);) {
+-               if (*buf == '\n') {
++       for (newline = 1; (content = fgetln(stdin, &len)) != NULL;) {
++               if (*content == '\n') {
+                        newline = 1;
+                        continue;
+                }
+-               if (newline && !strncmp(buf, "From ", 5) &&
+-                   (!sender || match(buf + 5, sender)))
+-                       printf("%s", buf);
++
++               if (content[len - 1] == '\n')
++                       content[len - 1] = '\0';
++               else {
++                       /* EOF without EOL, copy and add the NUL */
++                       if ((lbuf = malloc(len + 1)) == NULL)
++                               err(1, NULL);
++                       memcpy(lbuf, content, len);
++                       lbuf[len] = '\0';
++                       content = lbuf;
++               }
++               if (newline && !strncmp(content, "From ", 5) &&
++                   (!sender || match(content + 5, sender)))
++                       printf("%s\n", content);
+                newline = 0;
+        }
++       free(content);
+        exit(0);
+ }

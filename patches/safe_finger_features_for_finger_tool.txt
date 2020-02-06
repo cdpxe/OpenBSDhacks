@@ -1,0 +1,227 @@
+Return-Path: <owner-tech+M11685@openbsd.org>
+X-Flags: 0000
+Delivered-To: GMX delivery to cdp_xeREMOVE_THIS_TO_GET_MY_MAIL@gmx.net
+Received: (qmail invoked by alias); 20 Sep 2006 22:38:09 -0000
+Received: from shear.ucar.edu (EHLO shear.ucar.edu) [192.43.244.163]
+  by mx0.gmx.net (mx092) with SMTP; 21 Sep 2006 00:38:09 +0200
+Received: from openbsd.org (localhost.ucar.edu [127.0.0.1])
+	by shear.ucar.edu (8.13.8/8.13.6) with ESMTP id k8KMW49k006739;
+	Wed, 20 Sep 2006 16:32:04 -0600 (MDT)
+Received: from mail.gmx.net (mail.gmx.net [213.165.64.20])
+	by shear.ucar.edu (8.13.8/8.13.6) with SMTP id k8KMSSiU022981
+	for <tech@openbsd.org>; Wed, 20 Sep 2006 16:28:28 -0600 (MDT)
+Received: (qmail invoked
+	by alias); 20 Sep 2006 22:28:26 -0000
+Received: from pD9EE2A6D.dip.t-dialin.net (HELO eygo.sun) [217.238.42.109]
+	by mail.gmx.net (mp040) with SMTP; 21 Sep 2006 00:28:26 +0200
+X-Authenticated: #14443515
+Date: Thu, 21 Sep 2006 00:27:32 +0200
+To: tech@openbsd.org
+Subject: [patch] safe_finger features for finger tool
+X-Mailer: Sylpheed version 2.2.5 (GTK+ 2.8.20; i386-unknown-openbsd4.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Loop: tech@openbsd.org
+Precedence: list
+Sender: owner-tech@openbsd.org
+X-GMX-Antivirus: -1 (not scanned, may not use virus scanner)
+X-GMX-Antispam: 0 (Mail was not recognized as spam)
+X-GMX-UID: vbd4dro4eWU3qPZx929nasUrL0tsZk0M
+
+Hi,
+
+I implemented features of the safe_finger tool in finger(1). It can now
+run in restricted mode if you use it for receiving data from the
+network. To activate the restricted features, use the -r flag.
+
+Here is what it does:
+ - set uid+gid to nobody's values if the tool is started by a user with
+   GID = 0.
+ - limit the time finger receives data to 60 seconds
+ - limit the number of bytes to receive to 0xfffff
+
+What do you think about this patch?
+
+--steffen
+
+Index: extern.h
+===================================================================
+RCS file: /cvs/src/usr.bin/finger/extern.h,v
+retrieving revision 1.7
+diff -u -p -r1.7 extern.h
+--- extern.h	23 Aug 2005 13:43:53 -0000	1.7
++++ extern.h	20 Sep 2006 22:15:40 -0000
+@@ -56,6 +56,7 @@ PERSON	*palloc(void);
+ char	*prphone(char *);
+ int	 psort(const void *, const void *);
+ void	 sflag_print(void);
++void	 sig_exit(int);
+ int	 show_text(char *, char *, char *);
+ PERSON **sort(void);
+ void	 stimeprint(WHERE *);
+Index: finger.1
+===================================================================
+RCS file: /cvs/src/usr.bin/finger/finger.1,v
+retrieving revision 1.16
+diff -u -p -r1.16 finger.1
+--- finger.1	17 Oct 2003 10:56:09 -0000	1.16
++++ finger.1	20 Sep 2006 22:15:40 -0000
+@@ -40,7 +40,7 @@
+ .Op Fl hlMmops
+ .Op Ar user ...
+ .Nm finger
+-.Op Fl l
++.Op Fl rl
+ .Op Ar user@host ...
+ .Sh DESCRIPTION
+ The
+@@ -171,6 +171,11 @@ from displaying the contents of the
+ and
+ .Dq Pa .project
+ files.
++.It Fl r
++Restricted mode. This means to act like the well known tool safe_finger.
++If finger is started with gid 0, the gid and uid are set to the the gid
++and uid of the user nobody. This also limits the time finger is running
++to 60 seconds and the bytes to receive are limited too.
+ .It Fl s
+ Short format (default).
+ The information as described above is displayed in a columnar fashion.
+Index: finger.c
+===================================================================
+RCS file: /cvs/src/usr.bin/finger/finger.c,v
+retrieving revision 1.16
+diff -u -p -r1.16 finger.c
+--- finger.c	15 Mar 2004 02:50:29 -0000	1.16
++++ finger.c	20 Sep 2006 22:15:40 -0000
+@@ -80,7 +80,7 @@ static const char rcsid[] = "$OpenBSD: f
+ #include "extern.h"
+ 
+ time_t now;
+-int entries, lflag, sflag, mflag, oflag, pplan, Mflag;
++int entries, lflag, sflag, mflag, oflag, pplan, rflag, Mflag;
+ char tbuf[1024];
+ PERSON *htab[HSIZE];
+ PERSON *phead, *ptail;
+@@ -96,7 +96,7 @@ main(int argc, char *argv[])
+ 
+ 	oflag = 1;		/* default to old "office" behavior */
+ 
+-	while ((ch = getopt(argc, argv, "lmMpsho")) != -1)
++	while ((ch = getopt(argc, argv, "lmMprsho")) != -1)
+ 		switch(ch) {
+ 		case 'l':
+ 			lflag = 1;		/* long format */
+@@ -109,6 +109,9 @@ main(int argc, char *argv[])
+ 			break;
+ 		case 'p':
+ 			pplan = 1;		/* don't show .plan/.project */
++			break;
++		case 'r':			/* restricted mode */
++			rflag = 1;
+ 			break;
+ 		case 's':
+ 			sflag = 1;		/* short format */
+Index: net.c
+===================================================================
+RCS file: /cvs/src/usr.bin/finger/net.c,v
+retrieving revision 1.11
+diff -u -p -r1.11 net.c
+--- net.c	23 Jan 2006 17:29:22 -0000	1.11
++++ net.c	20 Sep 2006 22:15:40 -0000
+@@ -43,13 +43,21 @@ static const char rcsid[] = "$OpenBSD: n
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
++#include <signal.h>
+ #include <ctype.h>
+ #include <unistd.h>
+ #include <err.h>
++#include <pwd.h>
+ #include "finger.h"
+ #include "extern.h"
+ 
++#define MAX_WAIT 	60
++#define MAX_CHARS	0xfffff
++
++extern int rflag;
++
+ void
+ netfinger(name)
+ 	char *name;
+@@ -61,8 +69,34 @@ netfinger(name)
+ 	struct addrinfo hints, *res0, *res;
+ 	int error;
+ 	char hbuf[NI_MAXHOST];
++	int counter;
++	extern char *__progname;
++	struct passwd *pwd;
+ 
+ 	lastc = 0;
++	counter = 1;
++	
++	if (rflag) {
++		/* no superuser access */
++		if (getgid() == 0 || getegid() == 0) {
++			if ((pwd = getpwnam("nobody")) && pwd != NULL
++			  && pwd->pw_uid > 0 && pwd->pw_gid > 0) {
++				setgid(pwd->pw_gid);
++				setuid(pwd->pw_uid);
++			} else {
++				fprintf(stderr, "Unable to change to "
++					"UID/GID of user 'nobody'.\n");
++				exit(1);
++			}
++		}
++		
++		/* kill if this takes more than MAX_WAIT sec */
++		if (signal(SIGALRM, sig_exit) == SIG_ERR)
++			err(1, "signal");
++		if (alarm(MAX_WAIT) == (unsigned int)-1)
++			err(1, "alarm");
++	}
++	
+ 	if (!(host = strrchr(name, '@')))
+ 		return;
+ 	*host++ = '\0';
+@@ -114,7 +148,8 @@ netfinger(name)
+ 
+ 	/*
+ 	 * Read from the remote system; once we're connected, we assume some
+-	 * data.  If none arrives, we hang until the user interrupts.
++	 * data.  If none arrives and we're not running in restricted mode,
++	 * we hang until the user interrupts.
+ 	 *
+ 	 * If we see a <CR> or a <CR> with the high bit set, treat it as
+ 	 * a newline; if followed by a newline character, only output one
+@@ -143,8 +178,23 @@ netfinger(name)
+ 				}
+ 			}
+ 			putchar(c);
++			if (rflag) {
++				counter ++;
++				if (counter  > MAX_CHARS) {
++					fprintf(stderr,
++						"%s: received too many "
++						"bytes.\n", __progname);
++					exit(1);
++				}
++			}
+ 		}
+ 	if (lastc != '\n')
+ 		putchar('\n');
+ 	(void)fclose(fp);
++}
++
++void
++sig_exit(int sign)
++{
++	exit(1);
+ }
+
+
+-- 
+

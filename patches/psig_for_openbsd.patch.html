@@ -1,0 +1,1260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head><title>ported Solaris' psig to OpenBSD</title>
+<meta http-equiv="MSThemeCompatible" content="Yes">
+<meta name="revisit-after" content="7 days">
+<meta name="distribution" content="global">
+<meta NAME="ROBOTS" CONTENT="INDEX,FOLLOW">
+<link rel="stylesheet" href="/server.css" type="text/css">
+
+</head>
+<body bgcolor="#3B5470" text="#183562" id="all" link="#000020" vlink="#000020" alink="#000020">
+<table cellpadding="0" cellspacing="0" style="border-collapse: collapse" border="1" width="100%" bgcolor="#617893" bordercolor="#FFFFFF" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/hl.gif" border="0" /></td>
+<td background="images/hbg2.gif" width="100%" align="center"><img src="images/webserver.jpg" border="0" alt="Web Server forum"/></td>
+<td><img src="images/hr.gif" border="0" /></td></tr>
+<tr><td><img src="images/sl.gif" border="0" /></td>
+<td background="images/sbg.gif" width="100%" align="center"><a href="index.php?s=aaf361092b3f1c3bf08d5248d3e9043d"><img src="images/h.gif" alt="Back To The Forum Home!" border="0" /></a><a href="search.php?s=aaf361092b3f1c3bf08d5248d3e9043d"><img src="images/s.gif" alt="Search!" border="0" /></a><a href="private.php?s="><img src="images/e.gif" alt="Private Messaging System" border="0" /></a></td>
+<td><img src="images/sr.gif" border="0" /></td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td background="images/nav/navbg.gif"><a href="usercp.php?s=aaf361092b3f1c3bf08d5248d3e9043d" onmouseover="document.usercp.src='images/nav/usercpover.gif'" onmouseout="document.usercp.src='images/nav/usercp.gif'"><img src="images/nav/usercp.gif" alt="Visit your User Control Panel!" border="0" name="usercp"></a><a href="/fastlog.php?s=aaf361092b3f1c3bf08d5248d3e9043d" onmouseover="document.register.src='images/nav/registerover.gif'" onmouseout="document.register.src='images/nav/register.gif'"><img src="images/nav/register.gif" alt="Register your FREE username now!" border="0" name="register"></a><a href="calendar.php?s=aaf361092b3f1c3bf08d5248d3e9043d" onmouseover="document.cal.src='images/nav/calendarover.gif'" onmouseout="document.cal.src='images/nav/calendar.gif'"><img src="images/nav/calendar.gif" alt="Visit Our Calendar!" border="0" name="cal"></a><a href="memberlist.php?s=aaf361092b3f1c3bf08d5248d3e9043d" onmouseover="document.memb.src='images/nav/membersover.gif'" onmouseout="document.memb.src='images/nav/members.gif'"><img src="images/nav/members.gif" alt="View the Member List!" border="0" name="memb"></a><a href="misc.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=faq" onmouseover="document.misc.src='images/nav/faqover.gif'" onmouseout="document.misc.src='images/nav/faq.gif'"><img src="images/nav/faq.gif" alt="Faqs!" border="0" name="misc"></a><a href="http://search.webservertalk.com/cgi-bin/sitesearch.cgi" onmouseover="document.search.src='images/nav/searchover.gif'" onmouseout="document.search.src='images/nav/search.gif'"><img src="images/nav/search.gif" alt="Search our Forums!" border="0" name="search"></a></td>
+</tr><tr>
+<td background="images/snbg.gif"><img src="images/snbg.gif" border="0" /></td>
+</tr>
+</table>
+<br>
+<!-- content table -->
+<table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center">
+<tr>
+<td><img src="images/tl.gif" border="0" /></td>
+<td width="100%" background="images/tbg.gif" align="center"></td>
+<td><img src="images/tr.gif" border="0" /></td>
+</tr>
+</table>
+<table bgcolor="#FFFFFF" width="100%" cellpadding="10" cellspacing="0" border="0" align="center">
+<tr>
+<td>
+<br>
+<!-- breadcrumb, nav links -->
+<table cellpadding="2" cellspacing="0" border="0" width="98%"  align="center">
+<tr>
+<td><img src="images/vb_bullet.gif" border="0" align="middle" alt="Web Server Talk">
+<font face="verdana, arial, helvetica" size="1"><b><a href="/">Web Server Talk</a> &gt; <a href="/Unix_and_Linux_reviews_1.htm">Unix and Linux reviews</a> &gt; <a href="/OpenBSD_247.htm">OpenBSD</a> &gt; <a href="/OpenBSD_Technical_topics_249.htm">OpenBSD Technical topics</a> &gt; ported Solaris' psig to OpenBSD</b></font></td>
+
+</tr>
+</table>
+<!-- /breadcrumb, nav links -->
+<br>
+<br>
+<div align=center>
+<script type="text/javascript"><!--
+google_ad_client = "pub-6314654110945947";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_channel ="3963419352";
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "000020";
+google_color_url = "0000FF";
+google_color_text = "183562";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+</div>
+<br><br>
+<a name="posttop"></a>
+
+<!-- first unread and next/prev -->
+<table cellpadding="2" cellspacing="0" border="0" width="98%"  align="center">
+<tr>
+<td class="sf"> <a href="#newpost">Go to first unread post</a> <a href="#newpost"><img src="images/firstnew.gif" border="0" alt="first unread" align="absmiddle"></a>&nbsp;</td>
+<td align="right" class="sf">
+<img src="images/prev.gif" alt="" border="0">
+<a href="showthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&threadid=1495024&goto=nextoldest">Last Thread</a>
+&nbsp;
+<a href="showthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&threadid=1495024&goto=nextnewest">Next Thread</a>
+<img src="images/next.gif" alt="" border="0">
+</td>
+</tr>
+</table>
+<!-- first unread and next/prev -->
+<table width="98%" cellpadding="1" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" border="0" bgcolor="#4D6681" cellspacing="0" cellpadding="0" align="center">
+<tr>
+<td><img src="images/left.gif" border="0"></td>
+<td background="images/tb2.gif" nowrap="nowrap">&nbsp;&nbsp;<a href="printthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&threadid=1495024"><img src="images/printer.gif" alt="Show Printable Version" border="0" align="absmiddle"></a>&nbsp;<a href="sendtofriend.php?s=aaf361092b3f1c3bf08d5248d3e9043d&threadid=1495024"><img src="images/sendtofriend.gif" alt="Email this Page" border="0" align="absmiddle"></a>&nbsp;<a href="member2.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=addsubscription&threadid=1495024"><img src="images/subscribe.gif" alt="Subscribe to this Thread" border="0" align="absmiddle"></a>&nbsp;&nbsp;</td>
+		<td><img src="images/tbar.gif" border="0" /></td>
+		<td background="images/tbbg.gif" width="100%"></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td background="images/tb2.gif" nowrap="nowrap"><a href="newthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newthread&forumid=249"><img src="/images/newthread.gif" border="0" alt="Post New Thread"></a></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td background="images/tb2.gif" nowrap="nowrap"><a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&threadid=1495024"><img src="/images/reply.gif" border="0" alt="Post A Reply"></a></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td background="images/tbbg.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td><img src="images/right.gif" border="0"></td>
+	</tr>
+	</table>
+</td></tr></table>
+<br/>
+<table cellpadding="1" cellspacing="0" style="border-collapse: collapse" border="1" width="98%"  bordercolor="#345487" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td class="pbg"></td>
+<td class="pbg">&nbsp;</td>
+<td class="pbg"><img src="images/icons/icon1.gif" border="0" alt=""></td>
+<td class="pbgsf" nowrap="nowrap">&nbsp;&nbsp;ported Solaris' psig to OpenBSD<a name="post4128321"></a>&nbsp;&nbsp;</td>
+<td><img src="images/pcn.gif" border="0" /></td>
+<td width="100%" background="images/pbg2.gif" align="right"><img src="images/postl.gif" border="0" /></td>
+<td></td></tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table>
+<table width="148" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/tbit.gif" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center">
+<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#94979D" width="100%"><tr>	 
+<td width="100%" align="center"><table border="1" style="border-collapse: collapse" bordercolor="#94979D" width="90%" cellpadding="2">
+<tr>
+<td width="100%" bgcolor="#FFFFFF" class="pname"> 
+Steffen
+Wendzel</td>
+</tr>
+</table></td>
+</tr>                
+</table>
+</td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif"><img src="images/spacer.gif" width="8" height="5" border="0" /><br><img src="images/hr2.gif" border="0" /><br><img src="images/spacer.gif" width="8" height="5" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center"><a href="postings.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=getip&postid=4128321"><img src="images/ip.gif" alt="View Ip Address" border="0" /></a> <a href="report.php?s=aaf361092b3f1c3bf08d5248d3e9043d&postid=4128321"><img src="images/report.gif" alt="Report This Message To A Moderator" border="0" /></a> <a href="editpost.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=editpost&postid=4128321"><img src="images/edit.gif" border="0" alt="Edit/Delete Message"></a> </td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/bbit.gif" border="0" /></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr></table>
+<br></td><td width="100%" valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border"0">
+<tr><td width="100%" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table></td>
+<td><img src="images/pnav.gif" border="0" /></td>
+<td background="images/pnbg.gif" nowrap="nowrap"><img src="images/spacer.gif" width="1" height="4" border="0" /><br>     </td><td><img src="images/pnav2.gif" border="0" /></td><td>&nbsp;</td></tr></table><table width="100%" cellpadding="5" cellspacing="0" border="0" align="center"><tr><td class="post">
+05-01-06 07:13 PM<br /><br />
+<PRE>
+Hi,
+
+I just ported Solaris' psig-tool to OpenBSD. I modified the pkill
+code to do that (patch included). psig shows the signal settings
+of a process.
+
+examples:
+------------------------snip---------------------------
+cdp_xe@eygo:~/Mail$ psig cdpnntpd
+command: cdpnntpd, pid: 7775
+signal mask:
+ignore mask: HUP(0) URG(15) TSTP(17) TTIN(20) TTOU(21) IO(22)
+WINCH(27) INFO(28)
+catch mask:  INT(1) TERM(14) CHLD(19)
+cdp_xe@eygo:~/Mail$ psig Xorg
+command: Xorg, pid: 14254
+signal mask:
+ignore mask: URG(15) CHLD(19) IO(22) WINCH(27) INFO(28)
+catch mask:
+command: Xorg, pid: 21348
+signal mask:
+ignore mask: PIPE(12) URG(15) CHLD(19) TTIN(20) TTOU(21)
+WINCH(27) INFO(28) USR1(29)
+catch mask:  HUP(0) INT(1) ILL(3) EMT(6) FPE(7) BUS(9) SEGV(10)
+SYS(11) ALRM(13) TERM(14) IO(22) XCPU(23) XFSZ(24) USR2(30)
+cdp_xe@eygo:~/Mail$ psig pland
+command: pland, pid: 9833
+signal mask:
+ignore mask: PIPE(12) URG(15) CHLD(19) IO(22) WINCH(27) INFO(28)
+catch mask:  HUP(0) INT(1) QUIT(2) ILL(3) BUS(9) SEGV(10)
+ALRM(13) TERM(14)
+cdp_xe@eygo:~/Mail$ psig xconsole
+command: xconsole, pid: 11506
+signal mask:
+ignore mask: URG(15) CHLD(19) IO(22) WINCH(27) INFO(28)
+catch mask:
+------------------------snap---------------------------
+
+Here is the output of
+
+# cvs diff Makefile pkill.1 pkill.c
+
+------------------------snip---------------------------
+Index: Makefile
+ ========================================
+===========================
+RCS file: /cvs/src/usr.bin/pkill/Makefile,v
+retrieving revision 1.1
+diff -r1.1 Makefile
+11a12<font color="seagreen">
+&gt; LINKS+= $&#123;BINDIR}/pkill $&#123;BINDIR}/psig</font>
+12a14<font color="seagreen">
+&gt; MLINKS+=pkill.1 psig.1</font>
+Index: pkill.1
+ ========================================
+===========================
+RCS file: /cvs/src/usr.bin/pkill/pkill.1,v
+retrieving revision 1.7
+diff -r1.7 pkill.1
+42,43c42,43
+&lt; .Nm pgrep , pkill
+&lt; .Nd find or signal processes by name
+---<font color="seagreen">
+&gt; .Nm pgrep , pkill , psig
+&gt; .Nd find, signal or show signal settings (of) processes by name</font>
+66a67,76<font color="seagreen">
+&gt; .Nm psig
+&gt; .Op Fl fnvx
+&gt; .Op Fl G Ar gid
+&gt; .Op Fl g Ar pgrp
+&gt; .Op Fl P Ar ppid
+&gt; .Op Fl s Ar sid
+&gt; .Op Fl t Ar tty
+&gt; .Op Fl U Ar uid
+&gt; .Op Fl u Ar euid
+&gt; .Op Ar pattern ..</font>
+78a89,94<font color="seagreen">
+&gt; The
+&gt; .Nm psig
+&gt; command searches the process table on the running system and shows the
+&gt; signal settings of all processes that match the criteria given on the
+&gt; command line.
+&gt; .Pp</font>
+198a215,221<font color="seagreen">
+&gt; .Pp
+&gt; .Nm psig
+&gt; first appeared in
+&gt; .Ox 4.0 .
+&gt; It is modelled after a utility of the same name that is shipped with in Su
+n
+&gt; Solaris 8, but is not exactly the same.
+&gt;</font>
+201c224,227
+&lt; .Aq ad@NetBSD.org .
+---<font color="seagreen">
+&gt; .Aq ad@NetBSD.org ,
+&gt; .Pp
+&gt; .An Steffen Wendzel
+</font>
+Index: pkill.c
+ ========================================
+===========================
+RCS file: /cvs/src/usr.bin/pkill/pkill.c,v
+retrieving revision 1.14
+diff -r1.14 pkill.c
+90a91<font color="seagreen">
+&gt; int   psig;</font>
+111a113<font color="seagreen">
+&gt; int   sigact(struct kinfo_proc2 *, int);</font>
+132a135,137<font color="seagreen">
+&gt;       } else if (strcmp(__progname, "psig") == 0) &#123;
+&gt;               action = sigact;
+&gt;               psig = 1;</font>
+462a468,591<font color="seagreen">
+&gt;       return (0);
+&gt; }
+&gt;
+&gt; void
+&gt; print_signals(u_int32_t mask)
+&gt; &#123;
+&gt;       u_int32_t       testmask;
+&gt;       unsigned short  n;
+&gt;
+&gt;       for (testmask = 1, n = 0; n &lt; 32; n++) &#123;
+&gt;               if (mask & (testmask &lt;&lt; n)) &#123;
+&gt;                       switch(n + 1) &#123;
+&gt;                       case SIGHUP:
+&gt;                               printf("HUP(");
+&gt;                               break;
+&gt;                       case SIGINT:
+&gt;                               printf("INT(");
+&gt;                               break;
+&gt;                       case SIGQUIT:
+&gt;                               printf("QUIT(");
+&gt;                               break;
+&gt;                       case SIGILL:
+&gt;                               printf("ILL(");
+&gt;                               break;
+&gt;                       case SIGTRAP:
+&gt;                               printf("TRAP(");
+&gt;                               break;
+&gt;                       case SIGABRT:
+&gt;                               printf("ABRT(");
+&gt;                               break;
+&gt;                       case SIGEMT:
+&gt;                               printf("EMT(");
+&gt;                               break;
+&gt;                       case SIGFPE:
+&gt;                               printf("FPE(");
+&gt;                               break;
+&gt;                       case SIGBUS:
+&gt;                               printf("BUS(");
+&gt;                               break;
+&gt;                       case SIGSEGV:
+&gt;                               printf("SEGV(");
+&gt;                               break;
+&gt;                       case SIGSYS:
+&gt;                               printf("SYS(");
+&gt;                               break;
+&gt;                       case SIGPIPE:
+&gt;                               printf("PIPE(");
+&gt;                               break;
+&gt;                       case SIGALRM:
+&gt;                               printf("ALRM(");
+&gt;                               break;
+&gt;                       case SIGTERM:
+&gt;                               printf("TERM(");
+&gt;                               break;
+&gt;                       case SIGURG:
+&gt;                               printf("URG(");
+&gt;                               break;
+&gt;                       case SIGSTOP:
+&gt;                               printf("STOP(");
+&gt;                               break;
+&gt;                       case SIGTSTP:
+&gt;                               printf("TSTP(");
+&gt;                               break;
+&gt;                       case SIGCONT:
+&gt;                               printf("CONT(");
+&gt;                               break;
+&gt;                       case SIGCHLD:
+&gt;                               printf("CHLD(");
+&gt;                               break;
+&gt;                       case SIGTTIN:
+&gt;                               printf("TTIN(");
+&gt;                               break;
+&gt;                       case SIGTTOU:
+&gt;                               printf("TTOU(");
+&gt;                               break;
+&gt;                       case SIGIO:
+&gt;                               printf("IO(");
+&gt;                               break;
+&gt;                       case SIGXCPU:
+&gt;                               printf("XCPU(");
+&gt;                               break;
+&gt;                       case SIGXFSZ:
+&gt;                               printf("XFSZ(");
+&gt;                               break;
+&gt;                       case SIGVTALRM:
+&gt;                               printf("VTALRM(");
+&gt;                               break;
+&gt;                       case SIGPROF:
+&gt;                               printf("PROF(");
+&gt;                               break;
+&gt;                       case SIGWINCH:
+&gt;                               printf("WINCH(");
+&gt;                               break;
+&gt;                       case SIGINFO:
+&gt;                               printf("INFO(");
+&gt;                               break;
+&gt;                       case SIGUSR1:
+&gt;                               printf("USR1(");
+&gt;                               break;
+&gt;                       case SIGUSR2:
+&gt;                               printf("USR2(");
+&gt;                               break;
+&gt;                       default:
+&gt;                               printf("UNKNOWN(");
+&gt;                               break;
+&gt;                       }
+&gt;                       printf("%i) ", n);
+&gt;               }
+&gt;       }
+&gt; }
+&gt;
+&gt; int
+&gt; sigact(struct kinfo_proc2 *kp, int dummy)
+&gt; &#123;
+&gt;
+&gt;       printf("command: %s, pid: %i\n", kp-&gt;p_comm, (int)kp-&gt;p_pid);
+&gt;       printf("\tsignal mask: ");
+&gt;       print_signals(kp-&gt;p_sigmask);
+&gt;       printf("\n\tignore mask: ");
+&gt;       print_signals(kp-&gt;p_sigignore);
+&gt;       printf("\n\tcatch mask:  ");
+&gt;       print_signals(kp-&gt;p_sigcatch);
+&gt;       printf("\n");
+&gt;</font>
+------------------------snap---------------------------
+
+It would be damn cool if this would be applied in the official source and
+available in the next release.
+
+-- steffen
+
+
+</PRE>
+<br><br>
+
+<p></p>
+<p></p>
+<p><script type="text/javascript"><!--
+google_ad_client = "pub-6314654110945947";
+google_ad_width = 468;
+google_ad_height = 60;
+google_ad_format = "468x60_as";
+google_ad_type = "text_image";
+google_ad_channel ="1567029667";
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "000020";
+google_color_url = "000080";
+google_color_text = "183562";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></p>
+<BR/><BR/>
+<p>[ <a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&postid=4128321" class="reply">Post a follow-up to this message</a> ]</p><br></td></tr></table></td></tr>
+</table></td></tr>
+<tr><td width="100%" background="images/pbbg.gif"><img src="images/pbbg.gif" border="0" /></td></tr>
+</table></td></tr></table><table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/gl.gif" border="0" /></td>
+<td width="100%" background="images/gbg.gif"></td>
+<td><img src="images/gr.gif" border="0" /></td></tr>
+</table><br><table cellpadding="1" cellspacing="0" style="border-collapse: collapse" border="1" width="98%"  bordercolor="#345487" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td class="pbg"></td>
+<td class="pbg">&nbsp;</td>
+<td class="pbg"><img src="images/icons/icon1.gif" border="0" alt=""></td>
+<td class="pbgsf" nowrap="nowrap">&nbsp;&nbsp;Re: ported Solaris' psig to OpenBSD<a name="post4129438"></a><a name="newpost"></a>&nbsp;&nbsp;</td>
+<td><img src="images/pcn.gif" border="0" /></td>
+<td width="100%" background="images/pbg2.gif" align="right"><img src="images/postl.gif" border="0" /></td>
+<td></td></tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table>
+<table width="148" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/tbit.gif" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center">
+<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#94979D" width="100%"><tr>	 
+<td width="100%" align="center"><table border="1" style="border-collapse: collapse" bordercolor="#94979D" width="90%" cellpadding="2">
+<tr>
+<td width="100%" bgcolor="#FFFFFF" class="pname"> 
+Steffen
+Wendzel</td>
+</tr>
+</table></td>
+</tr>                
+</table>
+</td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif"><img src="images/spacer.gif" width="8" height="5" border="0" /><br><img src="images/hr2.gif" border="0" /><br><img src="images/spacer.gif" width="8" height="5" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center"><a href="postings.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=getip&postid=4129438"><img src="images/ip.gif" alt="View Ip Address" border="0" /></a> <a href="report.php?s=aaf361092b3f1c3bf08d5248d3e9043d&postid=4129438"><img src="images/report.gif" alt="Report This Message To A Moderator" border="0" /></a> <a href="editpost.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=editpost&postid=4129438"><img src="images/edit.gif" border="0" alt="Edit/Delete Message"></a> </td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/bbit.gif" border="0" /></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr></table>
+<br></td><td width="100%" valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border"0">
+<tr><td width="100%" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table></td>
+<td><img src="images/pnav.gif" border="0" /></td>
+<td background="images/pnbg.gif" nowrap="nowrap"><img src="images/spacer.gif" width="1" height="4" border="0" /><br>     </td><td><img src="images/pnav2.gif" border="0" /></td><td>&nbsp;</td></tr></table><table width="100%" cellpadding="5" cellspacing="0" border="0" align="center"><tr><td class="post">
+05-02-06 12:13 AM<br /><br />
+<PRE>
+here is the cvs diff -up output.
+-- steffen
+
+Index: Makefile
+ ========================================
+===========================
+RCS file: /cvs/src/usr.bin/pkill/Makefile,v
+retrieving revision 1.1
+diff -u -p -r1.1 Makefile
+--- Makefile    6 Jan 2004 20:07:49 -0000       1.1
++++ Makefile    1 May 2006 20:22:26 -0000
+@@ -9,6 +9,8 @@ LDADD+= -lkvm
+DPADD+=        $&#123;LIBKVM}
+
+LINKS+=        $&#123;BINDIR}/pkill $&#123;BINDIR}/pgrep
++LINKS+= $&#123;BINDIR}/pkill $&#123;BINDIR}/psig
+MLINKS+=pkill.1 pgrep.1
++MLINKS+=pkill.1 psig.1
+
+.include &lt;bsd.prog.mk&gt;
+Index: pkill.1
+ ========================================
+===========================
+RCS file: /cvs/src/usr.bin/pkill/pkill.1,v
+retrieving revision 1.7
+diff -u -p -r1.7 pkill.1
+--- pkill.1     16 Jul 2005 11:58:10 -0000      1.7
++++ pkill.1     1 May 2006 20:22:26 -0000
+@@ -39,8 +39,8 @@
+.Dt PKILL 1
+.Os
+.Sh NAME
+-.Nm pgrep , pkill
+-.Nd find or signal processes by name
++.Nm pgrep , pkill , psig
++.Nd find, signal or show signal settings (of) processes by name
+.Sh SYNOPSIS
+.Nm pgrep
+.Op Fl flnvx
+@@ -64,6 +64,16 @@
+.Op Fl U Ar uid
+.Op Fl u Ar euid
+.Op Ar pattern ...
++.Nm psig
++.Op Fl fnvx
++.Op Fl G Ar gid
++.Op Fl g Ar pgrp
++.Op Fl P Ar ppid
++.Op Fl s Ar sid
++.Op Fl t Ar tty
++.Op Fl U Ar uid
++.Op Fl u Ar euid
++.Op Ar pattern ..
+.Sh DESCRIPTION
+The
+.Nm pgrep
+@@ -76,6 +86,12 @@ The
+command searches the process table on the running system and signals all
+processes that match the criteria given on the command line.
+.Pp
++The
++.Nm psig
++command searches the process table on the running system and shows the
++signal settings of all processes that match the criteria given on the
++command line.
++.Pp
+The following options are available:
+.Bl -tag -width Ds
+.It Fl d Ar delim
+@@ -196,6 +212,16 @@ first appeared in
+.Ox 3.5 .
+They are modelled after utilities of the same name that appeared in Sun
+Solaris 7.
++.Pp
++.Nm psig
++first appeared in
++.Ox 4.0 .
++It is modelled after a utility of the same name that is shipped with in Sun
++Solaris 8, but is not exactly the same.
++
+.Sh AUTHORS
+.An Andrew Doran
+-.Aq ad@NetBSD.org .
++.Aq ad@NetBSD.org ,
++.Pp
++.An Steffen Wendzel
+Index: pkill.c
+ ========================================
+===========================
+RCS file: /cvs/src/usr.bin/pkill/pkill.c,v
+retrieving revision 1.14
+diff -u -p -r1.14 pkill.c
+--- pkill.c     16 Jul 2005 11:48:46 -0000      1.14
++++ pkill.c     1 May 2006 20:22:28 -0000
+@@ -88,6 +88,7 @@ char  *selected;
+char   *delim = "\n";
+int    nproc;
+int    pgrep;
++int    psig;
+int    signum = SIGTERM;
+int    newest;
+int    inverse;
+@@ -109,6 +110,7 @@ int main(int, char **);
+void   usage(void);
+int    killact(struct kinfo_proc2 *, int);
+int    grepact(struct kinfo_proc2 *, int);
++int    sigact(struct kinfo_proc2 *, int);
+void   makelist(struct listhead *, enum listtype, char *);
+
+extern char *__progname;
+@@ -130,6 +132,9 @@ main(int argc, char **argv)
+if (strcmp(__progname, "pgrep") == 0) &#123;
+action = grepact;
+pgrep = 1;
++       } else if (strcmp(__progname, "psig") == 0) &#123;
++               action = sigact;
++               psig = 1;
+} else &#123;
+action = killact;
+p = argv&#91;1];
+@@ -460,6 +465,130 @@ grepact(struct kinfo_proc2 *kp, int prin
+else
+printf("%d", (int)kp-&gt;p_pid);
+
++       return (0);
++}
++
++void
++print_signals(u_int32_t mask)
++&#123;
++       u_int32_t       testmask;
++       unsigned short  n;
++
++       for (testmask = 1, n = 0; n &lt; 32; n++) &#123;
++               if (mask & (testmask &lt;&lt; n)) &#123;
++                       switch(n+1) &#123;
++                       case SIGHUP:
++                               printf("HUP(");
++                               break;
++                       case SIGINT:
++                               printf("INT(");
++                               break;
++                       case SIGQUIT:
++                               printf("QUIT(");
++                               break;
++                       case SIGILL:
++                               printf("ILL(");
++                               break;
++                       case SIGTRAP:
++                               printf("TRAP(");
++                               break;
++                       case SIGABRT:
++                               printf("ABRT(");
++                               break;
++                       case SIGEMT:
++                               printf("EMT(");
++                               break;
++                       case SIGFPE:
++                               printf("FPE(");
++                               break;
++                       case SIGBUS:
++                               printf("BUS(");
++                               break;
++                       case SIGSEGV:
++                               printf("SEGV(");
++                               break;
++                       case SIGSYS:
++                               printf("SYS(");
++                               break;
++                       case SIGPIPE:
++                               printf("PIPE(");
++                               break;
++                       case SIGALRM:
++                               printf("ALRM(");
++                               break;
++                       case SIGTERM:
++                               printf("TERM(");
++                               break;
++                       case SIGURG:
++                               printf("URG(");
++                               break;
++                       case SIGSTOP:
++                               printf("STOP(");
++                               break;
++                       case SIGTSTP:
++                               printf("TSTP(");
++                               break;
++                       case SIGCONT:
++                               printf("CONT(");
++                               break;
++                       case SIGCHLD:
++                               printf("CHLD(");
++                               break;
++                       case SIGTTIN:
++                               printf("TTIN(");
++                               break;
++                       case SIGTTOU:
++                               printf("TTOU(");
++                               break;
++                       case SIGIO:
++                               printf("IO(");
++                               break;
++                       case SIGXCPU:
++                               printf("XCPU(");
++                               break;
++                       case SIGXFSZ:
++                               printf("XFSZ(");
++                               break;
++                       case SIGVTALRM:
++                               printf("VTALRM(");
++                               break;
++                       case SIGPROF:
++                               printf("PROF(");
++                               break;
++                       case SIGWINCH:
++                               printf("WINCH(");
++                               break;
++                       case SIGINFO:
++                               printf("INFO(");
++                               break;
++                       case SIGUSR1:
++                               printf("USR1(");
++                               break;
++                       case SIGUSR2:
++                               printf("USR2(");
++                               break;
++                       default:
++                               printf("UNKNOWN(");
++                               break;
++                       }
++                       printf("%i) ", n);
++               }
++       }
++}
++
++int
++sigact(struct kinfo_proc2 *kp, int dummy)
++&#123;
++
++       printf("command: %s, pid: %i\n", kp-&gt;p_comm, (int)kp-&gt;p_pid);
++       printf("\tsignal mask: ");
++       print_signals(kp-&gt;p_sigmask);
++       printf("\n\tignore mask: ");
++       print_signals(kp-&gt;p_sigignore);
++       printf("\n\tcatch mask:  ");
++       print_signals(kp-&gt;p_sigcatch);
++       printf("\n");
++
+return (0);
+}
+
+
+</PRE>
+<br><br>
+
+<p></p>
+<p></p>
+<p></p>
+<BR/><BR/>
+<p>[ <a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&postid=4129438" class="reply">Post a follow-up to this message</a> ]</p><br></td></tr></table></td></tr>
+</table></td></tr>
+<tr><td width="100%" background="images/pbbg.gif"><img src="images/pbbg.gif" border="0" /></td></tr>
+</table></td></tr></table><table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/gl.gif" border="0" /></td>
+<td width="100%" background="images/gbg.gif"></td>
+<td><img src="images/gr.gif" border="0" /></td></tr>
+</table><br><table cellpadding="1" cellspacing="0" style="border-collapse: collapse" border="1" width="98%"  bordercolor="#345487" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td class="pbg"></td>
+<td class="pbg">&nbsp;</td>
+<td class="pbg"><img src="images/icons/icon1.gif" border="0" alt=""></td>
+<td class="pbgsf" nowrap="nowrap">&nbsp;&nbsp;Re: ported Solaris' psig to OpenBSD<a name="post4132065"></a>&nbsp;&nbsp;</td>
+<td><img src="images/pcn.gif" border="0" /></td>
+<td width="100%" background="images/pbg2.gif" align="right"><img src="images/postl.gif" border="0" /></td>
+<td></td></tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table>
+<table width="148" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/tbit.gif" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center">
+<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#94979D" width="100%"><tr>	 
+<td width="100%" align="center"><table border="1" style="border-collapse: collapse" bordercolor="#94979D" width="90%" cellpadding="2">
+<tr>
+<td width="100%" bgcolor="#FFFFFF" class="pname"> 
+Steffen
+Wendzel</td>
+</tr>
+</table></td>
+</tr>                
+</table>
+</td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif"><img src="images/spacer.gif" width="8" height="5" border="0" /><br><img src="images/hr2.gif" border="0" /><br><img src="images/spacer.gif" width="8" height="5" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center"><a href="postings.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=getip&postid=4132065"><img src="images/ip.gif" alt="View Ip Address" border="0" /></a> <a href="report.php?s=aaf361092b3f1c3bf08d5248d3e9043d&postid=4132065"><img src="images/report.gif" alt="Report This Message To A Moderator" border="0" /></a> <a href="editpost.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=editpost&postid=4132065"><img src="images/edit.gif" border="0" alt="Edit/Delete Message"></a> </td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/bbit.gif" border="0" /></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr></table>
+<br></td><td width="100%" valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border"0">
+<tr><td width="100%" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table></td>
+<td><img src="images/pnav.gif" border="0" /></td>
+<td background="images/pnbg.gif" nowrap="nowrap"><img src="images/spacer.gif" width="1" height="4" border="0" /><br>     </td><td><img src="images/pnav2.gif" border="0" /></td><td>&nbsp;</td></tr></table><table width="100%" cellpadding="5" cellspacing="0" border="0" align="center"><tr><td class="post">
+05-02-06 06:14 PM<br /><br />
+<PRE>
+so... what do you think about psig? do you want to apply this patch?
+
+-- steffen
+
+
+</PRE>
+<br><br>
+
+<p></p>
+<p></p>
+<p></p>
+<BR/><BR/>
+<p>[ <a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&postid=4132065" class="reply">Post a follow-up to this message</a> ]</p><br></td></tr></table></td></tr>
+</table></td></tr>
+<tr><td width="100%" background="images/pbbg.gif"><img src="images/pbbg.gif" border="0" /></td></tr>
+</table></td></tr></table><table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/gl.gif" border="0" /></td>
+<td width="100%" background="images/gbg.gif"></td>
+<td><img src="images/gr.gif" border="0" /></td></tr>
+</table><br><table cellpadding="1" cellspacing="0" style="border-collapse: collapse" border="1" width="98%"  bordercolor="#345487" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td class="pbg"></td>
+<td class="pbg">&nbsp;</td>
+<td class="pbg"><img src="images/icons/icon1.gif" border="0" alt=""></td>
+<td class="pbgsf" nowrap="nowrap">&nbsp;&nbsp;Re: ported Solaris' psig to OpenBSD<a name="post4132066"></a>&nbsp;&nbsp;</td>
+<td><img src="images/pcn.gif" border="0" /></td>
+<td width="100%" background="images/pbg2.gif" align="right"><img src="images/postl.gif" border="0" /></td>
+<td></td></tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table>
+<table width="148" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/tbit.gif" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center">
+<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#94979D" width="100%"><tr>	 
+<td width="100%" align="center"><table border="1" style="border-collapse: collapse" bordercolor="#94979D" width="90%" cellpadding="2">
+<tr>
+<td width="100%" bgcolor="#FFFFFF" class="pname"> 
+Ted Unangst</td>
+</tr>
+</table></td>
+</tr>                
+</table>
+</td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif"><img src="images/spacer.gif" width="8" height="5" border="0" /><br><img src="images/hr2.gif" border="0" /><br><img src="images/spacer.gif" width="8" height="5" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center"><a href="postings.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=getip&postid=4132066"><img src="images/ip.gif" alt="View Ip Address" border="0" /></a> <a href="report.php?s=aaf361092b3f1c3bf08d5248d3e9043d&postid=4132066"><img src="images/report.gif" alt="Report This Message To A Moderator" border="0" /></a> <a href="editpost.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=editpost&postid=4132066"><img src="images/edit.gif" border="0" alt="Edit/Delete Message"></a> </td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/bbit.gif" border="0" /></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr></table>
+<br></td><td width="100%" valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border"0">
+<tr><td width="100%" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table></td>
+<td><img src="images/pnav.gif" border="0" /></td>
+<td background="images/pnbg.gif" nowrap="nowrap"><img src="images/spacer.gif" width="1" height="4" border="0" /><br>     </td><td><img src="images/pnav2.gif" border="0" /></td><td>&nbsp;</td></tr></table><table width="100%" cellpadding="5" cellspacing="0" border="0" align="center"><tr><td class="post">
+05-02-06 06:14 PM<br /><br />
+<PRE>
+On 5/2/06, Steffen Wendzel &lt;cdp_xe@gmx.net&gt; wrote:<font color="seagreen">
+&gt; so... what do you think about psig? do you want to apply this patch?</font>
+
+don't get antsy.  patches only get better with time. <img src="images/smilies/smile.gif" border="0" alt="">
+
+
+</PRE>
+<br><br>
+
+<p></p>
+<p></p>
+<p></p>
+<BR/><BR/>
+<p>[ <a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&postid=4132066" class="reply">Post a follow-up to this message</a> ]</p><br></td></tr></table></td></tr>
+</table></td></tr>
+<tr><td width="100%" background="images/pbbg.gif"><img src="images/pbbg.gif" border="0" /></td></tr>
+</table></td></tr></table><table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/gl.gif" border="0" /></td>
+<td width="100%" background="images/gbg.gif"></td>
+<td><img src="images/gr.gif" border="0" /></td></tr>
+</table><br><table cellpadding="1" cellspacing="0" style="border-collapse: collapse" border="1" width="98%"  bordercolor="#345487" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td class="pbg"></td>
+<td class="pbg">&nbsp;</td>
+<td class="pbg"><img src="images/icons/icon1.gif" border="0" alt=""></td>
+<td class="pbgsf" nowrap="nowrap">&nbsp;&nbsp;Re: ported Solaris' psig to OpenBSD<a name="post4134476"></a>&nbsp;&nbsp;</td>
+<td><img src="images/pcn.gif" border="0" /></td>
+<td width="100%" background="images/pbg2.gif" align="right"><img src="images/postl.gif" border="0" /></td>
+<td></td></tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table>
+<table width="148" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/tbit.gif" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center">
+<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#94979D" width="100%"><tr>	 
+<td width="100%" align="center"><table border="1" style="border-collapse: collapse" bordercolor="#94979D" width="90%" cellpadding="2">
+<tr>
+<td width="100%" bgcolor="#FFFFFF" class="pname"> 
+Sam Chill</td>
+</tr>
+</table></td>
+</tr>                
+</table>
+</td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif"><img src="images/spacer.gif" width="8" height="5" border="0" /><br><img src="images/hr2.gif" border="0" /><br><img src="images/spacer.gif" width="8" height="5" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center"><a href="postings.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=getip&postid=4134476"><img src="images/ip.gif" alt="View Ip Address" border="0" /></a> <a href="report.php?s=aaf361092b3f1c3bf08d5248d3e9043d&postid=4134476"><img src="images/report.gif" alt="Report This Message To A Moderator" border="0" /></a> <a href="editpost.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=editpost&postid=4134476"><img src="images/edit.gif" border="0" alt="Edit/Delete Message"></a> </td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/bbit.gif" border="0" /></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr></table>
+<br></td><td width="100%" valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border"0">
+<tr><td width="100%" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table></td>
+<td><img src="images/pnav.gif" border="0" /></td>
+<td background="images/pnbg.gif" nowrap="nowrap"><img src="images/spacer.gif" width="1" height="4" border="0" /><br>     </td><td><img src="images/pnav2.gif" border="0" /></td><td>&nbsp;</td></tr></table><table width="100%" cellpadding="5" cellspacing="0" border="0" align="center"><tr><td class="post">
+05-03-06 06:13 AM<br /><br />
+<PRE>
+&gt; On 5/2/06, Steffen Wendzel &lt;cdp_xe@gmx.net&gt; wrote:<font color="seagreen">
+&gt; so... what do you think about psig? do you want to apply this patch?</font>
+
+For what it's worth it compiles and works nicely on my system (-current).
+
+
+</PRE>
+<br><br>
+
+<p></p>
+<p></p>
+<p></p>
+<BR/><BR/>
+<p>[ <a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&postid=4134476" class="reply">Post a follow-up to this message</a> ]</p><br></td></tr></table></td></tr>
+</table></td></tr>
+<tr><td width="100%" background="images/pbbg.gif"><img src="images/pbbg.gif" border="0" /></td></tr>
+</table></td></tr></table><table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/gl.gif" border="0" /></td>
+<td width="100%" background="images/gbg.gif"></td>
+<td><img src="images/gr.gif" border="0" /></td></tr>
+</table><br>
+
+<!-- Linkage --> 
+<table cellpadding="1" cellspacing="0" style="border-collapse: collapse" border="1" width="98%"  bordercolor="#345487" align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td class="pbg"></td>
+<td class="pbg">&nbsp;</td>
+<td class="pbg"></td>
+<td class="pbgsf" nowrap="nowrap">&nbsp;&nbsp;Sponsored Links&nbsp;&nbsp;</td>
+<td><img src="images/pcn.gif" border="0" /></td>
+<td width="100%" background="images/pbg2.gif" align="right"><img src="images/postl.gif" border="0" /></td>
+<td></td></tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table>
+<table width="148" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td><td><img src="images/spacer.gif" width="8" height="5" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/tbit.gif" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center">
+<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#94979D" width="100%"><tr>	 
+<td width="100%" align="center"><table border="1" style="border-collapse: collapse" bordercolor="#94979D" width="90%" cellpadding="2">
+<tr>
+<td width="100%" bgcolor="#FFFFFF" class="pname"> 
+</td>
+</tr>
+</table></td>
+</tr>                
+</table>
+</td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif"><img src="images/spacer.gif" width="8" height="5" border="0" /><br><img src="images/hr2.gif" border="0" /><br><img src="images/spacer.gif" width="8" height="5" border="0" /></td>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+</tr>
+<tr>
+<td><img src="images/spacer.gif" width="8" height="1" border="0" /></td>
+<td background="images/tbitbg.gif" align="center"></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr><tr><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td><td><img src="images/bbit.gif" border="0" /></td><td><img src="images/spacer.gif" width="8" height="1" border="0" /></td></tr></table>
+<br></td><td width="100%" valign="top">
+<table width="100%" cellpadding="0" cellspacing="0" border"0">
+<tr><td width="100%" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td background="images/sd.gif"><img src="images/sd.gif" border="0" /></td></tr></table></td>
+<td><img src="images/pnav.gif" border="0" /></td>
+<td background="images/pnbg.gif" nowrap="nowrap"><img src="images/spacer.gif" width="1" height="4" border="0" /><br></td><td><img src="images/pnav2.gif" border="0" /></td><td>&nbsp;</td></tr></table><table width="100%" cellpadding="5" cellspacing="0" border="0" align="center"><tr><td class="post">
+<PRE>
+<script type="text/javascript"><!--
+google_ad_client = "pub-6314654110945947";
+google_ad_width = 300;
+google_ad_height = 250;
+google_ad_format = "300x250_as";
+google_ad_type = "text_image";
+google_ad_channel ="3963419352";
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</PRE>
+
+</td></tr></table></td></tr>
+</table></td></tr>
+<tr><td width="100%" background="images/pbbg.gif"><img src="images/pbbg.gif" border="0" /></td></tr>
+</table></td></tr></table><table width="98%" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td><img src="images/gl.gif" border="0" /></td>
+<td width="100%" background="images/gbg.gif"></td>
+<td><img src="images/gr.gif" border="0" /></td></tr>
+</table><br>
+
+<!-- /End Linkage -->
+<div id="archlink" align="center"><a href="/archive249.html">OpenBSD Technical topics archive</a></div><br><br>
+<table width="98%" cellpadding="1" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"  align="center"><tr><td>
+	<table width="100%" border="0" bgcolor="#4D6681" cellspacing="0" cellpadding="0" align="center">
+	<tr>
+		<td><img src="images/left.gif" border="0"></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="sfwb">&nbsp;&nbsp; All times are GMT. The time now is 12:48 PM.&nbsp;&nbsp;</td>
+		<td><img src="images/tbar.gif" border="0" /></td>
+		<td background="images/tbbg.gif" width="100%"></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td background="images/tb2.gif" nowrap="nowrap"><a href="newthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newthread&forumid=249"><img src="/images/newthread.gif" border="0" alt="Post New Thread"></a></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td background="images/tb2.gif" nowrap="nowrap"><a href="newreply.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=newreply&threadid=1495024"><img src="/images/reply.gif" border="0" alt="Post A Reply"></a></td>
+		<td background="images/tb2.gif" nowrap="nowrap" class="nf">&nbsp;&nbsp;</td>
+		<td background="images/tbbg.gif" nowrap="nowrap"><font face="verdana, arial, helvetica" size="1">&nbsp;&nbsp;</font></td>
+		<td><img src="images/right.gif" border="0"></td>
+	</tr>
+	</table>
+</td></tr></table>
+
+<!-- first unread and next/prev -->
+<table cellpadding="2" cellspacing="0" border="0" width="98%"  align="center">
+<tr>
+	<td class="sf">&nbsp;</td>
+	<td align="right" class="sf">
+	<img src="images/prev.gif" alt="" border="0">
+	<a href="showthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&threadid=1495024&goto=nextoldest">Last Thread</a>
+	&nbsp;
+	<a href="showthread.php?s=aaf361092b3f1c3bf08d5248d3e9043d&threadid=1495024&goto=nextnewest">Next Thread</a>
+	<img src="images/next.gif" alt="" border="0">
+	</td>
+</tr>
+</table>
+<br>
+<div id="abb"> <a href="http://www.codecomments.com">Programming discussions </a> | <a href="http://www.codecomments.com/Java_Forum/">Java forums</a>    <a href="http://www.codecomments.com/ASP_.NET/">ASP. NET Programming forum</a>   <a href="http://www.codecomments.com/MSDN/">MSDN forum</a>    <a href="http://www.codecomments.com/PERL_DBI/">Perl DBI forum</a></div>
+<!-- Start Popular -->
+<br>
+<table style="BORDER-COLLAPSE: collapse" borderColor="#345487" cellSpacing="0" cellPadding="1" width="98%" align="center" border="1">
+  <tbody>
+    <tr>
+      <td>
+        <table cellSpacing="0" cellPadding="0" width="100%" align="center" border="0">
+          <tbody>
+            <tr>
+              <td background="http://www.webservertalk.com/images/cbg.gif"><img src="http://www.webservertalk.com/images/cl.gif" border="0" width="35" height="29"></td>
+              <td noWrap background="http://www.webservertalk.com/images/cbg.gif" class="sfwb"> Most
+                Popular forums&nbsp;<br>
+                <img height="3" src="http://www.webservertalk.com/images/spacer.gif" width="1" border="0"></td>
+              <td width="100%" background="http://www.webservertalk.com/images/mbg.gif"><img src="http://www.webservertalk.com/images/mid.gif" border="0" width="12" height="29"></td>
+              <td><img src="http://www.webservertalk.com/images/cr.gif" border="0" width="4" height="29"></td>
+            </tr>
+          </tbody>
+        </table>
+        <table style="BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; BORDER-LEFT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid" cellSpacing="0" cellPadding="1" width="100%" align="center" bgColor="#ffffff" border="0">
+          <tbody>
+            <tr>
+              <td>
+                <table cellSpacing="1" cellPadding="4" width="100%" border="0" class="blinks">
+                  <tbody>
+                    <tr align="middle">
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/Apache_54.htm">Apache
+                        Server</a>
+                      </td>
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/MySQL_for_Windows_147.htm">MySQL
+                        for Windows</a></td>
+                      <td bgColor="#F6F7FB" width="34%" align="left"><a href="/Sendmail_58.htm">Sendmail</a></td>
+                    </tr>
+                   
+                    <tr align="middle">
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/Red_Hat_Networking_114.htm">Red
+                        Hat Networking</a>
+                      </td>
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/SUSE_Linux_76.htm">SuSe
+                        Linux</a></td>
+                      <td bgColor="#F6F7FB" width="34%" align="left"><a href="/Debian_43.htm">Debian
+                        Linux</a></td>
+                    </tr>
+                   
+                    <tr align="middle">
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/FreeBSD_77.htm">FreeBSD
+                        administration</a>
+                      </td>
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/Sun_Solaris_Administration_101.htm">Sun
+                        Solaris administration</a></td>
+                      <td bgColor="#F6F7FB" width="34%" align="left"><a href="/Unix_Shell_109.htm">Unix
+                        Shell programming</a></td>
+                    </tr>
+                   
+                    <tr align="middle">
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/WebSphere_Portal_Server_81.htm">WebSphere
+                        Portal Server</a>
+                      </td>
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/Exchange_Server_Administration_128.htm">Exchange
+                        2000 administration</a></td>
+                      <td bgColor="#F6F7FB" width="34%" align="left"><a href="/PostgreSQL_Administration_142.htm">PostgreSQL
+                        administration</a></td>
+                    </tr>
+                   
+                    <tr align="middle">
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/Linux_Security_91.htm">Linux
+                        Security</a>
+                      </td>
+                      <td bgColor="#F6F7FB" width="33%" align="left"><a href="/Computer_Security_89.htm">Computer
+                        Security</a></td>
+                      <td bgColor="#F6F7FB" width="34%" align="left"><a href="/Firewalls_95.htm">Firewalls</a></td>
+                    </tr>
+                   
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </td>
+    </tr>
+  </tbody>
+</table>
+<!-- /End popular -->
+<br>
+<!-- forum jump and rate thread -->
+<table cellpadding="2" cellspacing="0" border="0" width="98%"  align="center">
+<tr>
+<td><table cellpadding="0" cellspacing="0" border="0">
+<form action="forumdisplay.php" method="get"><tr><td>
+	<font face="verdana,arial,helvetica" size="1" >
+	<input type="hidden" name="s" value="aaf361092b3f1c3bf08d5248d3e9043d">
+	<input type="hidden" name="daysprune" value="">
+	<b>Forum Jump:</b><br>
+	<select name="forumid"
+	onchange="window.location=('forumdisplay.php?s=aaf361092b3f1c3bf08d5248d3e9043d&daysprune=&forumid='+this.options[this.selectedIndex].value)">
+		<option value="-1" >Please select one:</option>
+		<option value="-1">--------------------</option>
+		<option value="pm" >Private Messages</option>
+		<option value="cp" >User Control Panel</option>
+		<option value="wol" >Who's Online</option>
+		<option value="search" >Search Forums</option>
+		<option value="home" >Forums Home</option>
+		<option value="-1">--------------------</option>
+		<option value="33" > WebserverTalk Community</option><option value="39" >-- Web Server Talk Lounge</option><option value="283" >-- Backup Software</option><option value="285" >-- Data Storage</option><option value="293" >-- Client-Server</option><option value="302" >-- Anonymous Servers</option><option value="294" >-- Distributed Computing</option><option value="311" >-- Mozilla Browser</option><option value="299" >-- VPN</option><option value="371" >-- Open Enterprise Server Admin Tools</option><option value="372" >-- Zenworks management and monitoring</option><option value="379" >-- Voice Over IP</option><option value="386" >---- Voice Over IP in UK</option><option value="377" >---- Voice over IP Cisco</option><option value="2" > Web Servers reviews</option><option value="57" >-- Web Servers General Talk</option><option value="152" >-- WebLogic support</option><option value="153" >---- WebLogic installation support</option><option value="160" >-- Microsoft Site Server</option><option value="161" >---- Site Server General</option><option value="162" >---- Site Server Publishing</option><option value="163" >---- Site Server Search</option><option value="164" >---- Site Server Commerce</option><option value="54" >-- Apache Server configuration support</option><option value="383" >---- Apache JDO Project</option><option value="384" >---- Apache Directory Project</option><option value="309" >---- Apache Mod-Python</option><option value="56" >-- IIS server support</option><option value="120" >---- IIS Server</option><option value="121" >---- IIS FTP Server</option><option value="122" >---- IIS Server Security</option><option value="123" >---- Radius Server</option><option value="124" >---- IIS and SMTP</option><option value="125" >---- IIS Index Server</option><option value="126" >---- IIS ASP</option><option value="55" >-- WebSphere</option><option value="72" >---- WebSphere HTTP Server</option><option value="73" >---- WebSphere Components</option><option value="79" >---- WebSphere Commerce suite</option><option value="80" >---- WebSphere Application Server</option><option value="81" >---- WebSphere Portal Server</option><option value="82" >---- WebSphere Edge Server</option><option value="83" >---- WebSphere Site Analyzer</option><option value="381" >---- WebSphere HATS</option><option value="382" >---- IBM Host On-Demand</option><option value="165" >-- Microsoft Content Management Server</option><option value="186" >-- Application Center</option><option value="187" >---- Application Center Setup</option><option value="188" >---- Application Center Administration</option><option value="189" >---- Application Center Usage</option><option value="166" >-- Microsoft Commerce Server</option><option value="167" >---- Commerce Server General</option><option value="169" >---- Commerce Server Analysis</option><option value="170" >---- Business Desk</option><option value="171" >---- Content Selection Framework</option><option value="174" >---- User Profile Management</option><option value="168" >---- Commerce Server Setup</option><option value="172" >---- Commerce Server Catalog</option><option value="173" >---- Commerce Server Solution Sites</option><option value="177" >-- BizTalk Server</option><option value="178" >---- BizTalk Server General</option><option value="181" >---- BizTalk Server Administration</option><option value="179" >---- BizTalk Server</option><option value="180" >---- BizTalk Server Setup</option><option value="182" >---- BizTalk Server Framework</option><option value="183" >---- BizTalk Server Applications Integration</option><option value="184" >---- BizTalk Server Orchestration</option><option value="185" >---- BizTalk Server Tools</option><option value="175" >-- FrontPage Server Extensions for Unix</option><option value="176" >-- FrontPage Server Extensions for Windows</option><option value="199" >-- Web Servers on Windows</option><option value="198" >-- Web Servers on Unix and Linux</option><option value="254" >-- Squid</option><option value="369" >-- Netware Webserver</option><option value="370" >-- Open Enterprise Server Webserver</option><option value="388" >-- AOL Webserver</option><option value="374" >-- Macromedia Flash Server</option><option value="376" >-- Perlbal</option><option value="1" > Unix and Linux reviews</option><option value="41" >-- Free Unix support</option><option value="106" >---- Unix administration</option><option value="107" >---- Unix Programming</option><option value="108" >---- Unix questions</option><option value="109" >---- Unix Shell</option><option value="110" >---- Unix True 64</option><option value="226" >---- BSD</option><option value="42" >-- Red Hat support</option><option value="111" >---- Red Hat General</option><option value="112" >---- Red Hat Configuration</option><option value="113" >---- Red Hat Kernel</option><option value="114" >---- Red Hat Networking</option><option value="115" >---- Red Hat Servers</option><option value="116" >---- Red Hat Security</option><option value="117" >---- Red Hat RPM</option><option value="118" >---- Red Hat X</option><option value="119" >---- Red Hat Installation</option><option value="296" >---- Red Hat Topics</option><option value="43" >-- Free Debian support</option><option value="96" >---- Debian Counsultants</option><option value="97" >---- Debian Developers</option><option value="98" >---- Debian Security</option><option value="99" >---- Debian Linux Users forum</option><option value="291" >---- Linux Debian support</option><option value="45" >-- Sun Solaris support</option><option value="100" >---- Solaris General</option><option value="101" >---- Sun Solaris Administration</option><option value="102" >---- Sun Solaris Announcements</option><option value="103" >---- Sun Solaris Hardware</option><option value="104" >---- Sun Solaris classifieds</option><option value="105" >---- Miscellaneous</option><option value="76" >-- SUSE Linux</option><option value="243" >---- Suse linux forum</option><option value="373" >---- Open Enterprise Server for Suse Linux</option><option value="77" >-- FreeBSD</option><option value="247" >-- OpenBSD</option><option value="246" >---- OpenBSD General discussion</option><option value="248" >---- OpenBSD Bugs</option><option value="249" selected>---- OpenBSD Technical topics</option><option value="250" >---- OpenBSD Web</option><option value="260" >-- Unixware</option><option value="261" >-- Unix SCO</option><option value="262" >---- Unix SCO Announcements</option><option value="263" >---- Unix SCO Programmers</option><option value="264" >-- Ultrix</option><option value="227" >-- Linux support forum</option><option value="228" >---- Linux OS Forum</option><option value="229" >---- Linux administration</option><option value="230" >---- Linux Advocacy</option><option value="231" >---- Linux Announcements</option><option value="232" >---- Embedded Linux</option><option value="233" >---- Cheap Linux Hardware</option><option value="234" >---- Linux Help</option><option value="236" >---- Linux Networking</option><option value="237" >---- Questions</option><option value="238" >---- Linux Portable PCs</option><option value="239" >---- Power PC</option><option value="240" >---- Linux Setup</option><option value="241" >---- Linux X</option><option value="242" >---- Linux Kernel</option><option value="245" >---- UK Linux Users</option><option value="235" >---- Linux Miscelleneous</option><option value="200" >-- Mandrake Linux Support</option><option value="269" >-- Netbsd</option><option value="368" >-- Devil-Linux</option><option value="244" >-- CERN Linux</option><option value="292" >-- HP Unix</option><option value="295" >-- Editors</option><option value="310" >---- Emacs</option><option value="297" >-- DEC</option><option value="298" >-- Alpha Linux</option><option value="305" >-- Slackware Linux Support</option><option value="391" >-- RedHat Linux Cluster</option><option value="306" >-- Gentoo Linux forum</option><option value="35" > Microsoft Windows software support</option><option value="46" >-- Windows 2000 General</option><option value="284" >-- Microsoft Storage</option><option value="48" >-- Windows 2000 Networking</option><option value="49" >-- Windows 2000 Hardware</option><option value="51" >-- Windows 2000 DNS</option><option value="50" >-- Windows 2000 File system</option><option value="52" >-- Windows 2000 Advanced Server</option><option value="53" >-- Windows 2000 Security</option><option value="159" >-- Microsoft WebAdmin Tool</option><option value="385" >-- Windows NT DNS Server</option><option value="218" >-- Windows Media Server</option><option value="219" >-- Small Business Server</option><option value="300" >-- Veritas Backup</option><option value="32" > Email Servers</option><option value="58" >-- Sendmail support</option><option value="59" >-- Eudora support</option><option value="60" >-- Pine</option><option value="67" >-- EMail Headers</option><option value="68" >-- Email MIME</option><option value="154" >-- Email Abuse and Spam</option><option value="156" >-- Microsoft Mail Admin</option><option value="157" >---- Microsoft Email Connectivity</option><option value="158" >---- Email Miscellaneous</option><option value="66" >-- Qmail</option><option value="61" >-- Exchange Server support</option><option value="127" >---- Exchange 2000 General</option><option value="128" >---- Exchange Server Administration</option><option value="129" >---- Exchange 2000 Administration</option><option value="130" >---- Exchange 2000 Transport</option><option value="131" >---- Exchange 2000 Information Store</option><option value="304" >---- Exchange Server Tools</option><option value="367" >-- Exim4 support</option><option value="313" >-- Dnews</option><option value="314" >-- Surgemail</option><option value="201" >-- UUCP</option><option value="202" >-- IMAP</option><option value="203" >-- SMAIL</option><option value="204" >-- Mutt Email Client</option><option value="205" >-- Pegasus mail</option><option value="206" >-- Email List Administration</option><option value="209" >-- Spam</option><option value="207" >-- Stop Spam</option><option value="208" >-- General Email Topics</option><option value="364" >-- Postfix SQLgrey</option><option value="365" >-- Spamcop help</option><option value="279" >-- Exim</option><option value="280" >-- Postfix</option><option value="281" >---- Postfix Users</option><option value="282" >-- Miscellaneous Email topics</option><option value="375" >-- Courier Server</option><option value="390" >-- Amavisd-new</option><option value="34" > Free Databases support forum</option><option value="78" >-- Free MySQL support</option><option value="144" >---- MySQL users forum</option><option value="145" >---- MySQL General forum</option><option value="146" >---- msql-mysql modules</option><option value="147" >---- MySQL for Windows</option><option value="277" >---- MySQL Java</option><option value="303" >---- MySQL ODBC</option><option value="84" >-- Free PostgreSQL database support</option><option value="138" >---- Postgre Announcements</option><option value="139" >---- PostgreSQL</option><option value="140" >---- PostgreSQL Novice</option><option value="141" >---- Postgre questions</option><option value="142" >---- PostgreSQL Administration</option><option value="143" >---- PostgreSQL SQL</option><option value="155" >---- PostgreSQL ODBC</option><option value="307" >---- PostgresSQL General topics</option><option value="308" >---- PostgreSQL ODBC Interface</option><option value="348" >---- PostgeSQL Discussion</option><option value="85" >-- Oracle database</option><option value="148" >---- Oracle database support</option><option value="149" >---- Oracle Database Server</option><option value="150" >---- Oracle Server Tools</option><option value="151" >---- Oracle Miscellaneous</option><option value="86" >-- Microsoft SQL server</option><option value="132" >---- SQL Server</option><option value="133" >---- SQL Server Data Warehousing</option><option value="134" >---- SQL Server Connection</option><option value="135" >---- SQL JDBC Driver</option><option value="136" >---- MS SQL ODBC</option><option value="137" >---- SQL Server Security</option><option value="331" >---- OLAP</option><option value="87" >-- Sybase</option><option value="88" >---- Sybase ODBC</option><option value="255" >-- Sqlanywhere</option><option value="256" >---- SqlAnywhere on Linux</option><option value="257" >---- Future SQL Anywhere Features</option><option value="258" >---- SQL Anywhere Replication</option><option value="259" >---- SQL Anywhere Ultralite</option><option value="286" >-- Databases Forum</option><option value="289" >---- Database Theory</option><option value="290" >---- Database support and reviews</option><option value="288" >-- Ingres Database</option><option value="287" >-- Filemaker Database</option><option value="190" >-- dBASE</option><option value="191" >---- Getting Started</option><option value="192" >---- dBASE Installation and Configuration</option><option value="193" >---- dBASE support</option><option value="194" >---- dBASE SQL</option><option value="195" >---- dBASE Programming</option><option value="196" >---- dBASE Internet</option><option value="197" >---- dBASE Deployment</option><option value="220" >-- IBM DB2</option><option value="221" >-- Informix</option><option value="222" >-- Paradox</option><option value="223" >-- Progress Database</option><option value="224" >-- Visual Dbase</option><option value="225" >-- Berkley DB</option><option value="312" >-- Object database</option><option value="301" >-- Data Administration</option><option value="36" > Server Security</option><option value="89" >-- Computer Security</option><option value="90" >-- CERT Security Announcements</option><option value="91" >-- Linux Security</option><option value="92" >-- Unix Security</option><option value="93" >-- Microsoft Security</option><option value="94" >-- SSH</option><option value="95" >-- Firewalls reviews</option><option value="366" >---- Firestarter Firewall</option><option value="270" >---- IBM Firewall</option><option value="380" >-- Web Security Forum</option><option value="265" >-- PGP Encryption</option><option value="267" >-- PGP General forum</option><option value="251" >-- Snort</option><option value="252" >---- Snort Dev</option><option value="253" >---- Signatures</option><option value="266" >-- Scramdisk</option><option value="268" >-- Miscellaneous Security forum</option><option value="387" >-- Security news</option><option value="389" >-- ClamAV antivirus</option><option value="62" > Internet Protocols</option><option value="65" >-- TCP/IP</option><option value="69" >-- DNS Bind</option><option value="215" >-- SNMP</option><option value="274" >-- DNS</option><option value="276" >---- DNS protocol</option><option value="211" >-- NFS</option><option value="212" >-- NTP</option><option value="213" >-- Kerberos</option><option value="214" >-- SMB</option><option value="216" >-- PPP</option><option value="217" >-- Samba</option><option value="275" >-- Miscellaneous Internet Protocols</option><option value="63" > Web Hosting</option><option value="74" >-- Web Hosting</option><option value="75" >-- Free Web Hosting</option><option value="64" > Search Engines and Domain names</option><option value="70" >-- Search Engines forum</option><option value="71" >-- Google support</option><option value="378" >-- MSN Search</option><option value="210" >-- Domain Names</option><option value="271" >-- Domain Name Registries</option><option value="272" >-- Domain Names for sale</option><option value="273" >-- Domain names disputes</option>
+	</select><!-- go button -->
+<input type="image" src="images/go.gif" border="0" 
+align="absbottom">
+	</font>
+</td></tr></form>
+</table></td>
+<td align="right"><table cellpadding="0" cellspacing="0" border="0">
+<form action="threadrate.php" method="get"><tr><td>
+	<font face="verdana,arial,helvetica" size="1" >
+	<input type="hidden" name="s" value="aaf361092b3f1c3bf08d5248d3e9043d">
+	<input type="hidden" name="threadid" value="1495024">
+	<b>Rate This Thread:</b><br>
+	<select name="vote">
+		<option value="-1" selected>Select a rating...</option>
+		<option value="5">5 .. Best</option>
+		<option value="4">4</option>
+		<option value="3">3 .. Average</option>
+		<option value="2">2</option>
+		<option value="1">1 .. Worst</option>
+	</select><!-- go button -->
+<input type="image" src="images/go.gif" border="0" 
+align="absbottom">
+	</font>
+</td></tr></form>
+</table></td>
+</tr>
+</table>
+<br>
+<!-- forum rules and admin links -->
+<table cellpadding="2" cellspacing="0" border="0" width="98%"  align="center">
+<tr valign="bottom">
+<td class="sf"><b>Forum Rules:</b><table cellpadding="1" cellspacing="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #000000"><tr><td>
+<table cellpadding="4" cellspacing="1" border="0">
+<tr>
+	<td bgcolor="#EFF0F5"><font face="verdana,arial,helvetica" size="1" >
+		You <b>may not</b> post new threads<br>
+		You <b>may not</b> post replies<br>
+		You <b>may not</b> post attachments<br>
+		You <b>may not</b> edit your posts
+	</font></td>
+	<td bgcolor="#EFF0F5"><font face="verdana,arial,helvetica" size="1" >
+		HTML code is <b>OFF</b><br>
+		<a href="misc.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=bbcode" target="_blank">vB code</a> is <b>ON</b><br>
+		<a href="misc.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=showsmilies" target="_blank">Smilies</a> are <b>ON</b><br>
+		<a href="misc.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=bbcode#imgcode" target="_blank">[IMG]</a> code is <b>OFF</b>
+	</font></td>
+</tr>
+</table>
+</td></tr></table></td>
+<td align="right">
+&nbsp;
+</td>
+</tr>
+</table>
+<a href="http://www.pahealthsystems.com" target="_blank">Medical and Health forum</a> | <a href="http://www.gamesreviews.net" target="_blank">Computer Games Reviews</a> |  <a href="http://www.forum4designers.com" target="_blank">Graphics design forum</a>
+<div align="center" id="tla">
+<table style='border: 1px solid #000000; border-spacing: 0px;' cellpadding='5' cellspacing='0'><tbody><tr><td><span style='font-size:12px; color:#000000;'>  <a href='http://www.aplus.net' style='font-size:12px; color:#000000'>Web Hosting</a>  </span></td><td><span style='font-size:12px; color:#000000;'>  <a href='http://www.freewebdirectory.us' style='font-size:12px; color:#000000'>Online Advertising</a>  </span></td></tr><tr><td><span style='font-size:12px; color:#000000;'>  <a href='http://www.SecureMyCompany.com' style='font-size:12px; color:#000000'>Kaseya Managed Services</a>  </span></td><td><span style='font-size:12px; color:#000000;'>  <a href='http://www.hostway.com/' style='font-size:12px; color:#000000'>Web Hosting by Hostway</a>  </span></td></tr><tr><td><span style='font-size:12px; color:#000000;'>  <a href='http://www.sas-uk.net/microsoft-small-business-server-2003.htm' style='font-size:12px; color:#000000'>Small Business Server 2003</a>  </span></td><td> </td></tr></tbody></table>
+</div>
+
+
+
+<div align="center" id="f8">
+<a href="/syndication.htm"><img src="/xml.gif" border="0" alt="Content Syndication"></a> <a href="/syndication.htm">Syndicate this forum via XML or simple JavaScript feed</a><br><br>
+</div>
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center">
+<tr>
+<td><img src="images/fl.gif" border="0"></td>
+<td width="100%" bgcolor="#ffffff"></td>
+<td><img src="images/fr.gif" border="0"></td>
+</tr>
+</table>
+</td></tr></table>
+<br>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td background="images/vbbg.gif"><img src="images/vbbg.gif" border="0" /></td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td background="images/cpbg.gif"><img src="images/vcp.gif" border="0" /></td>
+<td width="100%" background="images/cpmid.gif" align="center"><a href="javascript:scroll(0,0);"><img src="images/vmid.gif" border="0" alt="Back To The Top" /></a></td>
+<td background="images/cpbg.gif"><img src="images/vscp.gif" border="0" /></td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td background="images/botbg.gif"><img src="images/botl.gif" border="0" /></td>
+<td width="100%" background="images/botbg.gif" align="center" class="sfb"><a href="/">Home</a> | <a href="usercp.php?s=aaf361092b3f1c3bf08d5248d3e9043d">Usercp</a> | <a href="misc.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=faq">Faq</a> | <a href="register.php?s=aaf361092b3f1c3bf08d5248d3e9043d&action=signup">Register</a></td>
+<td background="images/botbg.gif"><img src="images/botr.gif" border="0" /></td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td background="images/botcp.gif"><img src="images/botcp.gif" border="0" /></td>
+<td width="100%" background="images/botcp.gif" align="center"></td>
+<td background="images/botbg.gif"><img src="images/botcp.gif" border="0" /></td>
+</tr></table>
+</td></tr></table>
+<!-- start Vibrant Media IntelliTXT style script section -->
+<SCRIPT language="javascript" src="http://examnotes.us.intellitxt.com/intellitxt/front.asp?IPID=924&MK=10&FG=0000FF"></SCRIPT>
+<!-- end Vibrant Media IntelliTXT script section -->
+</BODY>
+</html>

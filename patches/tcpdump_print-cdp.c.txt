@@ -1,0 +1,97 @@
+Return-Path: <owner-tech+M11285@openbsd.org>
+X-Flags: 0000
+Delivered-To: GMX delivery to cdp_xeREMOVE_THIS_TO_GET_MY_ADDR@gmx.net
+Received: (qmail invoked by alias); 29 Jun 2006 18:14:23 -0000
+Received: from shear.ucar.edu (EHLO shear.ucar.edu) [192.43.244.163]
+  by mx0.gmx.net (mx008) with SMTP; 29 Jun 2006 20:14:23 +0200
+Received: from openbsd.org (localhost.ucar.edu [127.0.0.1])
+	by shear.ucar.edu (8.13.6/8.13.6) with ESMTP id k5TIAuUu007585;
+	Thu, 29 Jun 2006 12:10:56 -0600 (MDT)
+Received: from mail.gmx.net (mail.gmx.de [213.165.64.21])
+	by shear.ucar.edu (8.13.6/8.13.6) with SMTP id k5TI8ST5022126
+	for <tech@openbsd.org>; Thu, 29 Jun 2006 12:08:29 -0600 (MDT)
+Received: (qmail invoked
+	by alias); 29 Jun 2006 18:08:26 -0000
+Received: from N01c1.n.pppool.de (EHLO eygo.sun) [89.50.1.193]
+	by mail.gmx.net (mp035) with SMTP; 29 Jun 2006 20:08:26 +0200
+X-Authenticated: #10360708
+Date: Thu, 29 Jun 2006 20:08:41 +0000
+From: Steffen Wendzel <cdp_xeREMOVE_THIS_TO_GET_MY_ADDR@gmx.net>
+To: tech@openbsd.org
+Subject: tcpdump/print-cdp.c
+Message-Id: <20060629200841.5e60ddec.cdp_xeREMOVE_THIS_TO_GET_MY_ADDR@gmx.net>
+X-Mailer: Sylpheed version 2.0.2 (GTK+ 2.4.14; i386-unknown-openbsd3.6)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Loop: tech@openbsd.org
+Precedence: list
+Sender: owner-tech@openbsd.org
+X-GMX-Antivirus: -1 (not scanned, may not use virus scanner)
+X-GMX-Antispam: 0 (Mail was not recognized as spam)
+X-GMX-UID: 723Nd/gTeWU3pPZx929nYwYrL0tsZk15
+
+hi,
+
+I currently play with cisco discovery protocol using tcpdump for finding bugs
+in my packets. I just improved the capability output for tcpdump. I am sorry,
+but I was not able to test the code: I just was able to compile print.cdp using
+gcc -c -Wall print-cdp.c because I still run 3.6 i386 and the only current thing
+here is the tcpdump cvs checkout. I was not able to update the whole system
+using my damn 56k modem connection.
+
+Here is my very small patch. I don't think, that there should be a bug in this
+simple pice of code.
+
+Index: print-cdp.c
+===================================================================
+RCS file: /cvs/src/usr.sbin/tcpdump/print-cdp.c,v
+retrieving revision 1.2
+diff -u -p -r1.2 print-cdp.c
+--- print-cdp.c	30 May 2001 23:22:46 -0000	1.2
++++ print-cdp.c	29 Jun 2006 18:01:06 -0000
+@@ -99,6 +99,34 @@ cdp_print(const u_char *p, u_int length,
+ 			break;
+ 		case 0x04:
+ 			printf(" CAP 0x%02x", (unsigned) p[i+7]);
++			if (!vflag)
++				break;
++			switch (p[i+7]) {
++			case 0x01:
++				printf("(Router)");
++				break;
++			case 0x02:
++				printf("(Transparent Bridge)");
++				break;
++			case 0x04:
++				printf("(Source Route Bridge)");
++				break;
++			case 0x08:
++				printf("(Switch)");
++				break;
++			case 0x10:
++				printf("(Host)");
++				break;
++			case 0x20:
++				printf("(IGMP Capable)");
++				break;
++			case 0x40:
++				printf("(Repeater)");
++				break;
++			default:
++				/* unknown */
++				break;
++			}
+ 			break;
+ 		case 0x05:
+ 			if (vflag)
+
+
+
+
+
+
+
+-- 
+
+
