@@ -3,6 +3,6 @@ Some of my security-related coding projects for OpenBSD. Please note that I wrot
 
 The following projects are located here:
 
-* [FUPIDS](https://github.com/cdpxe/OpenBSDhacks/FUPIDS): A "fuzzy" user-profile IDS for OpenBSD
-* [openportd](https://github.com/cdpxe/OpenBSDhacks/openportd): "port knocking" service, but actually not using ports (it uses ICMP instead), for OpenBSD.
+* [FUPIDS](https://github.com/cdpxe/OpenBSDhacks/tree/master/FUPIDS): A "fuzzy" user-profile IDS for OpenBSD
+* [openportd](https://github.com/cdpxe/OpenBSDhacks/tree/master/openportd): "port knocking" service, but actually not using ports (it uses ICMP instead), for OpenBSD.
 
