@@ -1,0 +1,37 @@
+--- kern/uipc_socket.c	Fri Dec  5 17:13:17 2003
++++ /home/cdp_xe/projekte/fupids_/sys/kern/uipc_socket.c	Fri Dec  5 17:15:08 2003
+@@ -2,6 +2,8 @@
+ /*	$NetBSD: uipc_socket.c,v 1.21 1996/02/04 02:17:52 christos Exp $	*/
+ 
+ /*
++ * Copyright (c) 2003 Steffen Wendzel. <steffen (at) wendzel (dot) de>
++ *
+  * Copyright (c) 1982, 1986, 1988, 1990, 1993
+  *	The Regents of the University of California.  All rights reserved.
+  *
+@@ -48,6 +50,10 @@
+ #include <sys/resourcevar.h>
+ #include <sys/pool.h>
+ 
++#ifdef FUPIDS
++	#include <sys/fupids.h>
++#endif
++
+ void 	filt_sordetach(struct knote *kn);
+ int 	filt_soread(struct knote *kn, long hint);
+ void 	filt_sowdetach(struct knote *kn);
+@@ -172,6 +178,14 @@
+ 		backlog = sominconn;
+ 	so->so_qlimit = backlog;
+ 	splx(s);
++#ifdef FUPIDS
++	if(curproc->p_cred->p_ruid >= 1000) {
++		upid_userfind(curproc->p_cred->p_ruid, UPID_NEWLSTSOK);
++		printf("fupids: user %i, prog '%s': listen syscall\n",
++				(int) curproc->p_cred->p_ruid,
++				curproc->p_comm);
++	}
++#endif
+ 	return (0);
+ }
+ 

@@ -1,0 +1,55 @@
+.\" Copyright (c) 2006 Steffen Wendzel <steffen (at) wendzel (dot) de>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF MIND, USE, DATA OR PROFITS, WHETHER IN
+.\" AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+.\" OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd October 16, 2006
+.Dt OPENPORTD 8
+.Os
+.Sh NAME
+.Nm openportd
+.Nd "ICMP based port knocking/locking daemon"
+.Sh SYNOPSIS
+.Nm openport
+.Bk -words
+.Op Fl dh
+.Op Fl m Ar master-ip
+.Op Fl f Ar file
+.Ek
+.Sh DESCRIPTION
+The
+.Nm
+daemon receivs ICMP echo response packets and looks in their payload. If a special
+user defined key is found, a user-definable action can be executed.
+.Nm
+starts in foreground mode by default.
+.Pp
+The options are as follows:
+.Bl -tag -width "-f fileXXX"
+.It Fl d
+Run in daemon mode.
+.It Fl h
+Prints the help string.
+.It Fl m Ar ip
+Only accept ICMP packets from
+.Ar ip
+.It Fl f Ar file
+Use 
+.Ar file
+instead of
+.Pa /etc/openportd.conf
+as configuration file.
+.Sh SEE ALSO
+.Xr openportd.conf 5
+.Sh AUTHOR
+.Nm
+was written by Steffen Wendzel <steffen (at) wendzel (dot) de> in october 2006.

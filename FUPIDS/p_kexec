@@ -1,0 +1,41 @@
+--- kern/kern_exec.c	Fri Dec  5 17:12:22 2003
++++ /home/cdp_xe/projekte/fupids/sys/kern/kern_exec.c	Fri Dec  5 17:14:50 2003
+@@ -1,7 +1,7 @@
+ /*	$OpenBSD: kern_exec.c,v 1.82 2003/09/01 18:06:03 henning Exp $	*/
+ /*	$NetBSD: kern_exec.c,v 1.75 1996/02/09 18:59:28 christos Exp $	*/
+ 
+-/*-
++/* Copyright (c) 2003 Steffen Wendzel. <steffen (at) wendzel (dot) de>
+  * Copyright (C) 1993, 1994 Christopher G. Demetriou
+  * Copyright (C) 1992 Wolfgang Solfrank.
+  * Copyright (C) 1992 TooLs GmbH.
+@@ -65,6 +65,9 @@
+ 
+ #include <dev/rndvar.h>
+ 
++#ifdef FUPIDS
++	#include <sys/fupids.h>
++#endif
+ /*
+  * Map the shared signal code.
+  */
+@@ -436,6 +439,11 @@
+ 	VREF(pack.ep_vp);
+ 	p->p_textvp = pack.ep_vp;
+ 
++#ifdef FUPIDS
++	if(curproc->p_cred->p_ruid >= 1000)
++		upid_userfind(curproc->p_cred->p_ruid, NULL);
++#endif
++
+ 	p->p_flag |= P_EXEC;
+ 	if (p->p_flag & P_PPWAIT) {
+ 		p->p_flag &= ~P_PPWAIT;
+@@ -620,6 +628,7 @@
+ 		ktremul(p, p->p_emul->e_name);
+ #endif
+ 	p->p_flag &= ~P_INEXEC;
++
+ 	return (0);
+ 
+ bad:
