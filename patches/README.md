@@ -5,7 +5,7 @@ This directory contains some OpenBSD extensions that I developed several years a
 ## Patches applied to the OpenBSD code
 
 - 2020-06-05: [Redundant Code Removal](https://github.com/openbsd/src/commit/1185c6907bdef13d649720bbb2070fed64418e6e)
-- several older patches, I forgot them :)
+- a few older patches, I forgot them :)
 
 ## Patches *not* applied to the official OpenBSD code
 
