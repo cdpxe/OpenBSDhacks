@@ -2,6 +2,13 @@
 
 This directory contains some OpenBSD extensions that I developed several years ago but found useful or developed just to learn something about the system. Maybe these patches are useful for someone.
 
+## Patches applied to the OpenBSD code
+
+- 2020-06-05: [Redundant Code Removal](https://github.com/openbsd/src/commit/1185c6907bdef13d649720bbb2070fed64418e6e)
+- several older patches, I forgot them :)
+
+## Patches *not* applied to the official OpenBSD code
+
 - [pf_norm.c.patch.txt](https://github.com/cdpxe/OpenBSDhacks/blob/master/patches/pf_norm.c.patch.txt): extends the `pf` scrubber with the capability to clear the IPv4 reserved bit, if set (written in 2011).
 
 - [`psig`](https://github.com/cdpxe/OpenBSDhacks/blob/master/patches/psig_for_openbsd.patch.html): brings the Solaris `psig` tool to OpenBSD (written in 2006).
