@@ -1,5 +1,5 @@
 # OpenBSDhacks
-Some of my security-related coding projects for OpenBSD. Please note that I wrote these codes when I was in school (FUPIDS) or in my second undergrad semester (openportd). These codes are designed to work with OpenBSD 3.3 (or so).
+Some of my security-related coding projects for OpenBSD. Please note that I wrote these codes when I was in school (FUPIDS) or in my second undergrad semester (openportd). These codes/patches were crafted to work with OpenBSD 3.3 (or so). More of my research projects and papers can be found on [my website](https://www.wendzel.de).
 
 The following projects are located here:
 
